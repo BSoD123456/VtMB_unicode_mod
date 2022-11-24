@@ -1,0 +1,192 @@
+Would you like your character to be
+
+client:1E1B0000
+vgui2:00540000(007A0000)
+vguimatsurface:24A0000
+
+
+1E325145 -> client.1E35D120  # called fuinction looks like print text
+1E325089 -> client.1E3250A0(fix)
+1E325D58 -> client.1E325050(fix)  # called function looks like some script para loader
+1E325DEC -> client.1E325B90(fix)  # called function looks like some script handle
+1E35C2C4 -> client.1E35C8A0  # only click can touch the call
+004B2EFB -> client.1E35BF70  # always enter here
+004B29BE
+2010D40B
+
+  1E32557D -> client.1E2F1B90 # called function take the next select text
+  1E325629 -> client.1E35D120
+  1E32563E -> vgui2.0054C0F0(007AC0F0)  # called function looks like (no:print text) parse format like '%d %d' to value
+
+
+
+1E35E7A4 cmp src_char
+
+{wrong:
+  1E35D1D3 read char to cl
+  1E35D266 write char from al to dest buff
+  1E35D278(call something) read char from dest buff to al
+}
+
+
+  (dest buff always 1EA97E10?)
+  1E35E7DF loop start
+  1E35E7F2 cmp src_char with 1
+  1E35E8C5 -> client.1E381863 (src_char) # get charset flags
+  1E35E98F -> client.1E35D550 (some_flags?, src_char)
+    1E35D58A -> vguimatsurface.0201F040 (some_flags?, src_char, ...)
+  1E35EBEF loop end
+  1E35EBF5 loop out
+{no:1E361263 -> client.1E35D550(fix)}
+1E35E2BC -> client.1E35E6A0
+1E3251C6 -> client.1E35E2B0
+1E325089 -> client.1E3250A0(fix) (common here)
+1E325D58 -> client.1E325050(fix)
+1E325DEC -> client.1E325B90(fix)
+1E35C2C4 -> client.1E35C8A0 # a main router by ecx hndl (to 1E325DA0)
+
+
+client.1E325050: load script popup scene
+
+client.1E35D120: print popup text ?
+  1E35D278 -> client.1E35D360 # (no:print char) (no:new line check or something) modify text hook entry
+
+
+client.1E35D360 (void* p_text_hndl, char src_char, uint32_t src_offset): modify text hook entry
+
+vgui2.0054C0F0: parse format to value
+
+
+
+1E325145 -> client.1E35D120 # modi text and put to buff (break at 1E35E7DF, esp+ shows the address)
+
+
+
+
+60F81C4E jmp bugs_fix.60F81BD9  frame loop
+gameui.050F5C89 ->
+1E359C34 -> client.1E35DB60 # draw text ?
+  1E35DF31 before loop, once per text, [ESI] is text_hndl, [ESI+60] is dest buff
+  1E35DF37 loop start
+  1E35DF43 read char from dest buff EVERY FRAME
+  1E35DF65 -> client.1E361050
+  1E35E0EF -> client.1E35D940 (flags, offset, src_char, bool?) # print char !! main entry
+    1E35D952 -> call client.1E35D550 # (no:print char) get char width
+    1E35D97A -> <&Q_isprint>
+    1E35DA31 -> vguimatsurface.024AF1C0 # print char !! draw entry without width fix, break here. mod pushed cx
+      vguimatsurface.024AF244 -> vguimatsurface.024AF190 # replace some wchar to ansi char
+      vguimatsurface.024AF29d ->   # get char width info, maybe GetTextureForChar
+      vguimatsurface.024AF2D3 -> vguimatsurface.024B5820 # font->check_codec_range
+      vguimatsurface.024AF38C -> vguimatsurface.024B0F90
+        vguimatsurface.024B0FC8 -> materialsystem.02A047F0 # break here to check internal fnt(texture vector) font name
+      vguimatsurface.024AF3C4 -> call vguimatsurface.24AD470
+        vguimatsurface.024AD490 -> materialsystem.02A055D0
+      vguimatsurface.024AF471 -> vguimatsurface.024AF4F0 # draw char(x, y, width, height, ...textureinfo)
+        vguimatsurface.024AF628 -> vguimatsurface.24ADC40 # call shader
+          vguimatsurface.024ADCF0 -> shaderapidx9.2A013EC0
+          ... -> shaderapidx9
+  1E35E107 jl client.1E35DF37 # loop end
+
+
+1E359CE5 -> client.1E359B80
+  1E359C34 -> client.1E35DB60
+    ...
+
+vguimatsurface:03050000
+vguimatsurface.0305F2EB branch, ttf or wrong size YES to F414; fnt NO
+
+
+vguimatsurface:0275000
+=== flow 1: ===
+trackerscheme.res MainMenu_1024 font range set to 0xffff
+start game at title
+break at vguimatsurface.0275F1C0
+mem check [sp+0x38] and set hard bp mem write byte
+run untile hard bp broken
+mem check [sp+0x10], this is text buff, change text here
+remove hard bp and break at vguimatsurface.0274F1C0 again
+0275F24C: mov bl, al  ->  mov ebx, eax
+0275F2B4: movzx bx, bl -> nop; movzx ebx, bx
+0275F284~0275F2B3 shift 1 byte to 0275F285~0275F2B4
+0275F282: mov al, bl; nop -> mov ax, bx
+
+
+
+client:1CE30000
+vguimatsurface:0275000
+vgui2:007F0000
+at tile:
+1CFE3906 -> client.1CFE2610(fix)
+  1CFE2630 -> client.1CFE24B0 # get char width to [sp+0x30]
+    1CFE24C7 -> client.1CFDB0D0
+      1CFDB0E2 -> client.1CFD9920
+        1CFD9941 -> vgui2.00804AB0 # get text(or char) width to *[sp+0x4], and something(maybe height) to *[sp+0x8]?
+    1CFE250B -> client.1CFE6950 # get some width neg, and something to *[sp+0x4] val to *[sp] from [ecx+0xc,+0x10]?
+    1CFE2551 # calc char width
+  1CFE275D -> client.1CFE6910 # set text char width, eax is width
+  1CFE2765 -> client.1CFE9EF0 # draw text {!! all the widths mentioned above are actually offsets !!}
+    1CFEA168 -> vguimatsurface.0275F040 # get real char width to *[sp+0xc] !! font info func, unicode wchar input
+      0275F060 -> (vguimatsurface.27652D0)()->vguimatsurface.2765850 (someflag?, src_wchar, par_sp+0x8, par_sp+0xc, par_sp+0x10)
+        0276588B -> vguimatsurface.02766380 CWin32Font::GetCharABCWidths
+          0276638F # unicode branch, unicode YES, ansi NO
+          # for unicode
+          027663C7 -> GetCharABCWidthsW
+    1CFEA18D -> vguimatsurface.0275F150 # DrawSetTextPos(x, y)
+    1CFEA1CC -> vguimatsurface.0275F1C0 # DrawUnicodeChar(ch)
+    1CFEA1CF # add char width and padding to calc all text width
+
+
+engine:20000000
+update width info:
+      vguimatsurface.0276029A -> client.1CFD9B30 # get and update some width neg
+    vguimatsurface.027602D3 -> vguimatsurface.02760270 # recursion call self
+  vgui2.00802414 -> vguimatsurface.02760270
+engine.2010D40B -> vgui2.008022E0
+
+
+vguimatsurface:01D20000
+01D35786 -> vguimatsurface.01D35F10 CWin32Font::Create # load font
+  01D35F99 -> CreateFontA
+  01D35FE6 -> GetTextMetricsA
+  01D36088 -> GetCharABCWidthsW # only cached 00~ff char's ABC
+
+flow 2:
+break at 01D35786->vguimatsurface.01D35F10 CWin32Font::Create and step in
+change CreateFontA charset param(last 6th) from ANSI_CHARSET(0) to GB2312_CHARSET(0x86)
+
+
+ParagraphText_1024: first game text font item
+
+
+
+
+dlg text print:
+
+client:0AEA0000
+vguimatsurface:02010000
+vgui2:003A0000
+
+client.0AEF3AD1 or 0AEF43EA -> vguimatsurface.020207C0
+  vguimatsurface.020207F4 -> vguimatsurface.20206E0 # CMatSystemSurface::DrawColoredText
+    vguimatsurface.02020744 -> vstdlib.Q_vsnprintf
+    vguimatsurface.02020777 -> vgui2.003A9360 # CLocalizedStringTable::ConvertANSIToUnicode
+      vgui2.3A9375 -> MultiByteToWideChar
+    (02780000)
+    02790784 -> vguimatsurface.27A8985 # wcslen
+    02790797 -> vguimatsurface.0278F680 # CMatSystemSurface::DrawPrintText
+      0278F76E -> vguimatsurface.0278F020 # GetFontTall
+      0278F79D # loop start here
+      0278F7AF -> vguimatsurface.0278F190 # replace some w char to a char
+      
+      0278F7B7 # some a char move, like in F1C0(DrawUnicodeChar)
+      0278F7CB # write only a char to mem
+      0278F7E5 # some a char move
+      
+      0278F7D9 -> vguimatsurface.0236F040 # GetCharABCwide
+      0278F813 -> vguimatsurface.27A891C # iswspace(ch)
+    (02360000)
+    023707A7-> 02370CD0 # DrawTextLen
+      02370D41 -> vguimatsurface.0236F040 # GetCharABCwide
+        0236F060 -> vguimatsurface.2375850 # FontManager().GetCharABCwide (for texture font)
+          0237586E -> vguimatsurface.2375DC0 # get font to eax, font name here.
+
