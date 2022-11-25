@@ -98,14 +98,14 @@ MOD_DLLS = {
                 I.create_reg_reg(C.MOVZX_R32_RM16, R.EBX, R.BX),
                 I.create(C.NOPD),
             ]),
-            (0xf81d, [
-                I.create(C.NOPD),
-                I.create(C.NOPD),
-                I.create(C.NOPD),
-                I.create(C.NOPD),
-                I.create(C.NOPD),
-                I.create(C.NOPD),
-            ]),
+##            (0xf81d, [
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##            ]),
             # CWin32Font::Create
             (0x15f7a, [
                 I.create_reg_u32(C.MOV_R8_IMM8, R.AL, 134), #GB2312
