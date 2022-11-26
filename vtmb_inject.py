@@ -62,13 +62,13 @@ MOD_DLLS = {
         'path': 'Bin',
         'file': 'vguimatsurface.dll',
         'md5':  '0e8c1c67e4a4c7f227e4b5fa9e7e3eee',
-        'patch': [
+        'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             (0x38954, b'GetGlyphOutlineW'), # ipt replace GetGlyphOutlineA to GetGlyphOutlineW
-            (0x34fff, b'\xcc\xcc'), # force extend code sect
-            (0x4cfff, b'\x00\x00\x00\x00\x00'), # force extend data sect
+            (code_ext - 1, b'\xcc\xcc'), # force extend code sect
+            (data_ext - 1, b'\x00\x00\x00\x00\x00'), # force extend data sect
             # CMatSystemSurface::DrawUnicodeChar
             (0x0f1c0, [
-                I.create_branch(C.JMP_REL32_32, 0x35000),
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
             ]),
             (0x0f24c, [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EBX, R.EAX),
@@ -78,7 +78,7 @@ MOD_DLLS = {
                 I.create_reg_reg(C.MOV_R16_RM16, R.AX, R.BX),
             ]),
 ##            (0x0f2a3, [
-##                I.create_branch(C.JMP_REL32_32, 0x35100),
+##                I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
 ##                I.create(C.NOPD),
 ##                I.create(C.NOPD),
 ##                I.create(C.NOPD),
@@ -113,7 +113,7 @@ MOD_DLLS = {
             ]),
             # CWin32Font::GetCharABCWidths
             (0x16380, [
-                I.create_branch(C.JMP_REL32_32, 0x35800),
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
                 I.create(C.NOPD),
                 I.create(C.NOPD),
             ]),
@@ -122,7 +122,7 @@ MOD_DLLS = {
 ##                I.create_mem(C.CALL_RM32, M(displ=0x10036020, displ_size=4)),
 ##            ]),
             # hooks for DrawUnicodeChar
-            (0x35000, with_label_ctx(lambda lbc: [
+            (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -136,7 +136,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #read log
-                I.create_reg_mem(C.MOVZX_R16_RM8, R.CX, M(displ=0x1004d000, displ_size=4)),
+                I.create_reg_mem(C.MOVZX_R16_RM8, R.CX, M(displ=base_addr+data_ext, displ_size=4)),
                 I.create_reg_reg(C.TEST_RM8_R8, R.CL, R.CL),
                 I.create_branch(C.JE_REL32_32, lbc.lb('byte_1')),
                 #byte_2
@@ -144,9 +144,9 @@ MOD_DLLS = {
                 I.create_reg_u32(C.SHL_RM16_IMM8, R.AX, 8), #LE for unicode convert
                 I.create_reg_reg(C.OR_R16_RM16, R.AX, R.CX),
                 #convert gbk to unicode
-                I.create_branch(C.CALL_REL32_32, 0x35200),
+                I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
-                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=0x1004d000, displ_size=4), 0),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext, displ_size=4), 0),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -154,7 +154,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
-                I.create_mem_reg(C.MOV_RM8_R8, M(displ=0x1004d000, displ_size=4), R.AL),
+                I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext, displ_size=4), R.AL),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret_bypass')),
                 #ret
                 lbc.add('ret',
@@ -170,7 +170,7 @@ MOD_DLLS = {
                 I.create_u32(C.RETND_IMM16, 0x4),
             ])),
             # hooks for DrawUnicodeChar width calc
-##            (0x35100, [
+##            (code_ext + hooks[2], [
 ##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x30, displ_size=1)),
 ##                I.create_reg_mem(C.ADD_R32_RM32, R.ECX, M(R.ESP, displ=0x40, displ_size=1)),
 ##                I.create_mem_reg(C.MOV_RM32_R32, M(R.ESP, displ=0x30, displ_size=1), R.ECX),
@@ -179,7 +179,7 @@ MOD_DLLS = {
 ##                I.create_branch(C.JMP_REL32_32, 0xf2ab),
 ##            ]),
             # func convert ansi to unicode
-            (0x35200, with_label_ctx(lambda lbc: [
+            (code_ext + funcs[0], with_label_ctx(lambda lbc: [
                 I.create_reg_u32(C.SUB_RM32_IMM8, R.ESP, 0x4),
                 I.create_reg(C.PUSH_R32, R.EAX),
                 I.create_reg(C.PUSH_R32, R.ECX),
@@ -203,7 +203,7 @@ MOD_DLLS = {
                 I.create(C.RETND),
             ])),
             # hooks for GetCharABCWidths
-            (0x35800, with_label_ctx(lambda lbc: [
+            (code_ext + hooks[1], with_label_ctx(lambda lbc: [
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -217,7 +217,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #read log
-                I.create_reg_mem(C.MOVZX_R16_RM8, R.CX, M(displ=0x1004d001, displ_size=4)),
+                I.create_reg_mem(C.MOVZX_R16_RM8, R.CX, M(displ=base_addr+data_ext+1, displ_size=4)),
                 I.create_reg_reg(C.TEST_RM8_R8, R.CL, R.CL),
                 I.create_branch(C.JE_REL32_32, lbc.lb('byte_1')),
                 #byte_2
@@ -225,9 +225,9 @@ MOD_DLLS = {
                 I.create_reg_u32(C.SHL_RM16_IMM8, R.AX, 8), #LE for unicode convert
                 I.create_reg_reg(C.OR_R16_RM16, R.AX, R.CX),
                 #convert gbk to unicode
-                I.create_branch(C.CALL_REL32_32, 0x35200),
+                I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
-                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=0x1004d001, displ_size=4), 0),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+1, displ_size=4), 0),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -235,7 +235,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
-                I.create_mem_reg(C.MOV_RM8_R8, M(displ=0x1004d001, displ_size=4), R.AL),
+                I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext+1, displ_size=4), R.AL),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret_bypass')),
                 #ret
                 lbc.add('ret',
@@ -256,7 +256,7 @@ MOD_DLLS = {
                 I.create_mem_u32(C.MOV_RM32_IMM32, M(R.EAX), 0),
                 I.create_u32(C.RETND_IMM16, 0x10),
             ])),
-        ],
+        ])(0x10000000, 0x35000, 0x4e000, [0, 0x100, 0x200], [0x800]),
     },
     'vstdlib': {
         'path': 'Bin',
