@@ -138,6 +138,7 @@ MOD_DLLS = {
             # hooks for DrawUnicodeChar
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xffff),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+2, displ_size=4), 0),
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -161,6 +162,7 @@ MOD_DLLS = {
                 #convert gbk to unicode
                 I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+2, displ_size=4), 2),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -168,6 +170,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+2, displ_size=4), 1),
                 I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext, displ_size=4), R.AL),
                 I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
                 I.create_reg(C.POP_R32, R.ECX),
@@ -183,6 +186,7 @@ MOD_DLLS = {
             # hooks for GetCharABCWidths
             (code_ext + hooks[1], with_label_ctx(lambda lbc: [
                 I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xffff),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+3, displ_size=4), 0),
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -206,6 +210,7 @@ MOD_DLLS = {
                 #convert gbk to unicode
                 I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+3, displ_size=4), 2),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -213,6 +218,7 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+3, displ_size=4), 1),
                 I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext+1, displ_size=4), R.AL),
                 I.create_reg(C.POP_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
@@ -331,6 +337,17 @@ MOD_DLLS = {
 ##            ]),
 ##        ],
 ##    },
+    'client': {
+        'path': 'Unofficial_Patch\cl_dlls',
+        'file': 'client.dll',
+        'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
+        'patch': [
+            # a func which split text to multi lines, here find breakable position
+            (0x55066, [
+                
+            ]),
+        ],
+    },
 }
 
 def asm_draw_char_patch():
