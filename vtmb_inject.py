@@ -161,7 +161,6 @@ MOD_DLLS = {
                 #convert gbk to unicode
                 I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
-                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext, displ_size=4), 0),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -170,19 +169,16 @@ MOD_DLLS = {
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
                 I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext, displ_size=4), R.AL),
-                I.create_branch(C.JMP_REL32_32, lbc.lb('ret_bypass')),
-                #ret
-                lbc.add('ret',
-                    I.create_reg_mem(C.MOV_EAX_MOFFS32, R.EAX, M(displ=0x1004af4c, displ_size=4)),
-                ),
-                I.create_reg(C.POP_R32, R.ECX),
-                I.create_branch(C.JMP_REL32_32, 0xf1c5),
-                #bypass
-                lbc.add('ret_bypass',
-                    I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
-                ),
+                I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
                 I.create_reg(C.POP_R32, R.ECX),
                 I.create_u32(C.RETND_IMM16, 0x4),
+                #ret
+                lbc.add('ret',
+                    I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext, displ_size=4), 0),
+                ),
+                I.create_reg_mem(C.MOV_EAX_MOFFS32, R.EAX, M(displ=0x1004af4c, displ_size=4)),
+                I.create_reg(C.POP_R32, R.ECX),
+                I.create_branch(C.JMP_REL32_32, 0xf1c5),
             ])),
             # hooks for GetCharABCWidths
             (code_ext + hooks[1], with_label_ctx(lambda lbc: [
@@ -210,7 +206,6 @@ MOD_DLLS = {
                 #convert gbk to unicode
                 I.create_branch(C.CALL_REL32_32, code_ext + funcs[0]),
                 I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x8, displ_size=1), R.AX),
-                I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+1, displ_size=4), 0),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
                 #byte_1
                 lbc.add('byte_1',
@@ -219,18 +214,7 @@ MOD_DLLS = {
                 I.create_branch(C.JB_REL32_32, lbc.lb('ret')),
                 #log and bypass
                 I.create_mem_reg(C.MOV_RM8_R8, M(displ=base_addr+data_ext+1, displ_size=4), R.AL),
-                I.create_branch(C.JMP_REL32_32, lbc.lb('ret_bypass')),
-                #ret
-                lbc.add('ret',
-                    I.create_reg(C.POP_R32, R.ECX),
-                ),
-                I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x4, displ_size=1)),
-                I.create_reg_u32(C.SUB_RM32_IMM8, R.ESP, 0xc),
-                I.create_branch(C.JMP_REL32_32, 0x16387),
-                #bypass
-                lbc.add('ret_bypass',
-                    I.create_reg(C.POP_R32, R.ECX),
-                ),
+                I.create_reg(C.POP_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_mem_u32(C.MOV_RM32_IMM32, M(R.EAX), 0),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0xc, displ_size=1)),
@@ -238,6 +222,14 @@ MOD_DLLS = {
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
                 I.create_mem_u32(C.MOV_RM32_IMM32, M(R.EAX), 0),
                 I.create_u32(C.RETND_IMM16, 0x10),
+                #ret
+                lbc.add('ret',
+                    I.create_mem_u32(C.MOV_RM8_IMM8, M(displ=base_addr+data_ext+1, displ_size=4), 0),
+                ),
+                I.create_reg(C.POP_R32, R.ECX),
+                I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x4, displ_size=1)),
+                I.create_reg_u32(C.SUB_RM32_IMM8, R.ESP, 0xc),
+                I.create_branch(C.JMP_REL32_32, 0x16387),
             ])),
             # hooks for CFontAmalgam::GetFontForChar, un-negtive src char
             (code_ext + hooks[2], with_label_ctx(lambda lbc: [
