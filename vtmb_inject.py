@@ -169,39 +169,6 @@ MOD_DLLS = {
                 I.create_reg(C.POP_R32, R.ECX),
                 I.create_u32(C.RETND_IMM16, 0x4),
             ])),
-            # hooks for DrawUnicodeChar width calc
-##            (code_ext + hooks[2], [
-##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x30, displ_size=1)),
-##                I.create_reg_mem(C.ADD_R32_RM32, R.ECX, M(R.ESP, displ=0x40, displ_size=1)),
-##                I.create_mem_reg(C.MOV_RM32_R32, M(R.ESP, displ=0x30, displ_size=1), R.ECX),
-##                I.create_reg_mem(C.MOV_R32_RM32, R.EDI, M(R.ESP, displ=0x10, displ_size=1)),
-##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x2c, displ_size=1)),
-##                I.create_branch(C.JMP_REL32_32, 0xf2ab),
-##            ]),
-            # func convert ansi to unicode
-            (code_ext + funcs[0], with_label_ctx(lambda lbc: [
-                I.create_reg_u32(C.SUB_RM32_IMM8, R.ESP, 0x4),
-                I.create_reg(C.PUSH_R32, R.EAX),
-                I.create_reg(C.PUSH_R32, R.ECX),
-                I.create_reg(C.PUSH_R32, R.EDX),
-                # get g_pVGuiLocalize
-                I.create_branch(C.CALL_REL32_32, 0x19e00),
-                I.create_reg_mem(C.MOV_R32_RM32, R.EDX, M(R.EAX)),
-                I.create_u32(C.PUSHD_IMM32, 0x2),
-                I.create_reg_mem(C.LEA_R32_M, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
-                I.create_reg(C.PUSH_R32, R.EAX),
-                I.create_reg_mem(C.LEA_R32_M, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
-                I.create_reg(C.PUSH_R32, R.EAX),
-                # g_pVGuiLocalize->ConvertANSIToUnicode(src, dst, 2)
-                I.create_mem(C.CALL_RM32, M(R.EDX, displ=0x1c, displ_size=1)),
-                I.create_reg(C.POP_R32, R.EDX),
-                I.create_reg(C.POP_R32, R.ECX),
-                I.create_reg(C.POP_R32, R.EAX),
-                # ret unicode char
-                I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.ESP)),
-                I.create_reg_u32(C.ADD_RM32_IMM8, R.ESP, 0x4),
-                I.create(C.RETND),
-            ])),
             # hooks for GetCharABCWidths
             (code_ext + hooks[1], with_label_ctx(lambda lbc: [
                 I.create_reg(C.PUSH_R32, R.ECX),
@@ -255,6 +222,39 @@ MOD_DLLS = {
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
                 I.create_mem_u32(C.MOV_RM32_IMM32, M(R.EAX), 0),
                 I.create_u32(C.RETND_IMM16, 0x10),
+            ])),
+            # hooks for DrawUnicodeChar width calc
+##            (code_ext + hooks[2], [
+##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x30, displ_size=1)),
+##                I.create_reg_mem(C.ADD_R32_RM32, R.ECX, M(R.ESP, displ=0x40, displ_size=1)),
+##                I.create_mem_reg(C.MOV_RM32_R32, M(R.ESP, displ=0x30, displ_size=1), R.ECX),
+##                I.create_reg_mem(C.MOV_R32_RM32, R.EDI, M(R.ESP, displ=0x10, displ_size=1)),
+##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x2c, displ_size=1)),
+##                I.create_branch(C.JMP_REL32_32, 0xf2ab),
+##            ]),
+            # func convert ansi to unicode
+            (code_ext + funcs[0], with_label_ctx(lambda lbc: [
+                I.create_reg_u32(C.SUB_RM32_IMM8, R.ESP, 0x4),
+                I.create_reg(C.PUSH_R32, R.EAX),
+                I.create_reg(C.PUSH_R32, R.ECX),
+                I.create_reg(C.PUSH_R32, R.EDX),
+                # get g_pVGuiLocalize
+                I.create_branch(C.CALL_REL32_32, 0x19e00),
+                I.create_reg_mem(C.MOV_R32_RM32, R.EDX, M(R.EAX)),
+                I.create_u32(C.PUSHD_IMM32, 0x2),
+                I.create_reg_mem(C.LEA_R32_M, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
+                I.create_reg(C.PUSH_R32, R.EAX),
+                I.create_reg_mem(C.LEA_R32_M, R.EAX, M(R.ESP, displ=0x10, displ_size=1)),
+                I.create_reg(C.PUSH_R32, R.EAX),
+                # g_pVGuiLocalize->ConvertANSIToUnicode(src, dst, 2)
+                I.create_mem(C.CALL_RM32, M(R.EDX, displ=0x1c, displ_size=1)),
+                I.create_reg(C.POP_R32, R.EDX),
+                I.create_reg(C.POP_R32, R.ECX),
+                I.create_reg(C.POP_R32, R.EAX),
+                # ret unicode char
+                I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.ESP)),
+                I.create_reg_u32(C.ADD_RM32_IMM8, R.ESP, 0x4),
+                I.create(C.RETND),
             ])),
         ])(0x10000000, 0x35000, 0x4e000, [0, 0x100, 0x200], [0x800]),
     },
