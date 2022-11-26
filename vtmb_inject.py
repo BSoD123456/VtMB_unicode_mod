@@ -126,7 +126,7 @@ MOD_DLLS = {
 ##            (0x163c7, [
 ##                I.create_mem(C.CALL_RM32, M(displ=0x10036020, displ_size=4)),
 ##            ]),
-            # _iswcntrl
+            # get_char_info_ctype <- iswcntrl/iswspace/...
             (0x2bd9c, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[3]),
                 I.create(C.NOPD),
@@ -252,7 +252,7 @@ MOD_DLLS = {
                 I.create_reg_reg(C.XOR_R32_RM32, R.EDX, R.EDX),
                 I.create_branch(C.JMP_REL32_32, 0x15dc6),
             ])),
-            # hooks for _iswcntrl
+            # hooks for get_char_info_ctype <- iswcntrl/iswspace/...
             (code_ext + hooks[3], with_label_ctx(lambda lbc: [
                 I.create_mem_u32(C.CMP_RM16_IMM16, M(R.ESP, displ=0x4, displ_size=1), 0xff00),
                 I.create_branch(C.JAE_REL32_32, lbc.lb('ret_bypass')),
@@ -264,9 +264,11 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, 0x2bda6),
                 #bypass
                 lbc.add('ret_bypass',
-                    I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
+                    I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
                 ),
-                I.create_reg(C.INC_R32, R.EAX),
+                # I don't know what ctype is 0x300, maybe standard uchar?
+                # but it's work to let flags 0x157 be true and flags 0x8 be false.
+                I.create_reg_u32(C.AND_EAX_IMM32, R.EAX, 0x300),
                 I.create(C.RETND), #cdecl
             ])),
             # hooks for DrawUnicodeChar width calc

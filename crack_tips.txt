@@ -233,7 +233,7 @@ vguimatsurface:025E0000
     1C885784 -> vguimatsurface.25EF070 # CMatSystemSurface::GetCharacterWidth
       025EF081 -> vguimatsurface.25F58E0 # FontManager().GetCharacterWidth(font, ch);
         025F58EA -> vguimatsurface.2608949 # iswcntrl(ch)
-          02608952 -> vguimatsurface.260BD9C
+          02608952 -> vguimatsurface.260BD9C # get char info flags
         025F590D -> vguimatsurface.25F5850 # CFontManager::GetCharABCwide
           025F586E -> vguimatsurface.25F5DC0 # m_FontAmalgams[font].GetFontForChar(ch), check char range and get win font
           025F588B -> vguimatsurface.025F6380 # winFont->GetCharABCWidths(ch, a, b, c);
