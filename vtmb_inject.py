@@ -78,7 +78,7 @@ MOD_DLLS = {
                 I.create_reg_reg(C.MOV_R16_RM16, R.AX, R.BX),
             ]),
 ##            (0x0f2a3, [
-##                I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
+##                I.create_branch(C.JMP_REL32_32, code_ext + hooks[k]),
 ##                I.create(C.NOPD),
 ##                I.create(C.NOPD),
 ##                I.create(C.NOPD),
@@ -106,6 +106,11 @@ MOD_DLLS = {
 ##                I.create(C.NOPD),
 ##                I.create(C.NOPD),
 ##            ]),
+            # CFontAmalgam::GetFontForChar
+            (0x15dc0, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
+                I.create(C.NOPD),
+            ]),
             # CWin32Font::Create
             (0x15f7a, [
                 I.create_reg_u32(C.MOV_R8_IMM8, R.AL, 134), #GB2312
@@ -121,8 +126,18 @@ MOD_DLLS = {
 ##            (0x163c7, [
 ##                I.create_mem(C.CALL_RM32, M(displ=0x10036020, displ_size=4)),
 ##            ]),
+            # _iswcntrl
+            (0x2bd9c, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[3]),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+            ]),
             # hooks for DrawUnicodeChar
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
+                I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xffff),
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -171,6 +186,7 @@ MOD_DLLS = {
             ])),
             # hooks for GetCharABCWidths
             (code_ext + hooks[1], with_label_ctx(lambda lbc: [
+                I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xffff),
                 I.create_reg(C.PUSH_R32, R.ECX),
                 I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x8, displ_size=1)),
                 I.create_reg_u32(C.CMP_RM16_IMM16, R.AX, 0x100),
@@ -223,8 +239,46 @@ MOD_DLLS = {
                 I.create_mem_u32(C.MOV_RM32_IMM32, M(R.EAX), 0),
                 I.create_u32(C.RETND_IMM16, 0x10),
             ])),
+            # hooks for CFontAmalgam::GetFontForChar, un-negtive src char
+            (code_ext + hooks[2], with_label_ctx(lambda lbc: [
+                I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x4, displ_size=1)),
+                I.create_reg_u32(C.AND_EAX_IMM32, R.EAX, 0xff00),
+                I.create_reg_u32(C.CMP_EAX_IMM32, R.EAX, 0xff00),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('keep2')),
+                #keep1
+                I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xff),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('ret')),
+                #keep2
+                lbc.add('keep2',
+                    I.create_mem_u32(C.AND_RM32_IMM32, M(R.ESP, displ=0x4, displ_size=1), 0xffff),
+                ),
+                #ret
+                lbc.add('ret',
+                    I.create_reg(C.PUSH_R32, R.ESI),
+                ),
+                I.create_reg_mem(C.MOV_R32_RM32, R.ESI, M(R.ECX, displ=0xc, displ_size=1)),
+                I.create_reg_reg(C.XOR_R32_RM32, R.EDX, R.EDX),
+                I.create_branch(C.JMP_REL32_32, 0x15dc6),
+            ])),
+            # hooks for _iswcntrl
+            (code_ext + hooks[3], with_label_ctx(lambda lbc: [
+                I.create_mem_u32(C.CMP_RM16_IMM16, M(R.ESP, displ=0x4, displ_size=1), 0xff00),
+                I.create_branch(C.JAE_REL32_32, lbc.lb('ret_bypass')),
+                #ret
+                I.create_reg(C.PUSH_R32, R.EBP),
+                I.create_reg_reg(C.MOV_R32_RM32, R.EBP, R.ESP),
+                I.create_reg(C.PUSH_R32, R.ECX),
+                I.create_mem_u32(C.CMP_RM16_IMM16, M(R.EBP, displ=0x8, displ_size=1), 0xffff),
+                I.create_branch(C.JMP_REL32_32, 0x2bda6),
+                #bypass
+                lbc.add('ret_bypass',
+                    I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
+                ),
+                I.create_reg(C.INC_R32, R.EAX),
+                I.create(C.RETND), #cdecl
+            ])),
             # hooks for DrawUnicodeChar width calc
-##            (code_ext + hooks[2], [
+##            (code_ext + hooks[k], [
 ##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x30, displ_size=1)),
 ##                I.create_reg_mem(C.ADD_R32_RM32, R.ECX, M(R.ESP, displ=0x40, displ_size=1)),
 ##                I.create_mem_reg(C.MOV_RM32_R32, M(R.ESP, displ=0x30, displ_size=1), R.ECX),
@@ -256,7 +310,7 @@ MOD_DLLS = {
                 I.create_reg_u32(C.ADD_RM32_IMM8, R.ESP, 0x4),
                 I.create(C.RETND),
             ])),
-        ])(0x10000000, 0x35000, 0x4e000, [0, 0x100, 0x200], [0x800]),
+        ])(0x10000000, 0x35000, 0x4e000, [0, 0x100, 0x200, 0x300], [0x800]),
     },
     'vstdlib': {
         'path': 'Bin',

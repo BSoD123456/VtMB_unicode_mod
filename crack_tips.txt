@@ -225,24 +225,29 @@ vguimatsurface:025E0000
 
 1C8849BC -> client.1C884F70
   1C884FE2 -> client.1C8856D0 # get limited max char len
-  1C884FF3 -> client.1C8856D0 # get limited max char len, calc dest text
+  1C884FF3 -> client.1C8856D0 # get limited max char len (second)
     1C885752 -> vguimatsurface.25EF090 # CMatSystemSurface::GetFontTall
     1C885765 # loop start, calc text width below width limit
     1C885767 # loop here
     1CF9577C # read char by movsx, so it's signed char, be filled by ff as dword(0xffffff80+), and exceed font range(0xffff), cause m_FontAmalgams[font].GetFontForChar(ch) failed !
     1C885784 -> vguimatsurface.25EF070 # CMatSystemSurface::GetCharacterWidth
       025EF081 -> vguimatsurface.25F58E0 # FontManager().GetCharacterWidth(font, ch);
+        025F58EA -> vguimatsurface.2608949 # iswcntrl(ch)
+          02608952 -> vguimatsurface.260BD9C
         025F590D -> vguimatsurface.25F5850 # CFontManager::GetCharABCwide
           025F586E -> vguimatsurface.25F5DC0 # m_FontAmalgams[font].GetFontForChar(ch), check char range and get win font
           025F588B -> vguimatsurface.025F6380 # winFont->GetCharABCWidths(ch, a, b, c);
     1C88578F # loop here
   1C885052 # loop here, split text
-  1C88505E # find first NL(\n) char index, and compare with max char len below width limit
+  1C88505E # find first {wrong:NL(\n)} EOS(\0) char index, and compare with max char len below width limit
   1C885075 # find last break char('-', ' ') befor max char len by reverse order
   1C885083 # find done, there is the pos to breakline
   1C88508D -> vstdlib.Q_strncpy(dst, src, maxlen: breakline pos)
   1C8850A5 -> client.1C885130 # AddText
+  1C8850AA # trim space(\x20)
+  1C8850B9 # trim loop end
   1C8850C5 -> client.1C8856D0 # get limited max char len
     ....
+  1C8850D6 -> client.1C8856D0 # get limited max char len (second)
   1C8850E6 # loop end
 
