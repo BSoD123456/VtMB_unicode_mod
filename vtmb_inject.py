@@ -465,6 +465,20 @@ class c_mark:
     def STR(self, pos, cnt, codec = 'utf8'):
         return self.BYTES(pos, cnt).split(b'\0')[0].decode(codec)
 
+    def BYTESN(self, pos):
+        st = self.offset + pos
+        rl = len(self.raw)
+        ed = rl
+        for i in range(st, rl):
+            if self.raw[i] == 0:
+                ed = i
+                break
+        return self.raw[st:ed], ed - st
+
+    def STRN(self, pos, codec = 'utf8'):
+        b, n = self.BYTESN(pos)
+        return b.decode(codec), n
+
     def sub(self, pos, length = 0):
         if length > 0:
             s = c_mark(None, 0)
@@ -853,7 +867,7 @@ class c_pe_file(c_mark):
             mk.W8(b, offs_sect + i)
         return offs_sect + sect_info['offs']
 
-    def _shift(self, mark, offs_sect, s_len, shft_len):
+    def _shift(self, mk, offs_sect, s_len, shft_len):
         if shft_len < 0:
             s_offs = offs_sect - shft_len
             rng = range(s_offs, s_offs + s_len)
@@ -861,7 +875,7 @@ class c_pe_file(c_mark):
             s_offs = offs_sect
             rng = range(s_offs + s_len - 1, s_offs - 1, -1)
         for i in rng:
-            mark.W8(mark.U8(i), i + shft_len)
+            mk.W8(mk.U8(i), i + shft_len)
         return s_offs, s_offs + shft_len
 
     def shift(self, s_st, s_len, shft_len):
@@ -1029,6 +1043,20 @@ class c_pe_file(c_mark):
                 if not blk_lst_entry_offs is None:
                     mk.W32(blk_lst_page_addr, idx)
                     mk.W32(blk_lst_rm_size + blk_entry_len, idx + 0x4)
+
+    def _repack_name_tab(self, mk, offs, num, name_add, name_del):
+        pass
+
+    def update_export(self, expt_add, expt_del):
+        datdir_info = self.tab_datdir[0x0]
+        mk = datdir_info['mark']
+        szv = datdir_info['size_v']
+        ord_base = mk.U32(0x10)
+        num_func = mk.U32(0x14)
+        num_fname = mk.U32(0x18)
+        addr_func_arr = mk.U32(0x1c)
+        addr_fname_arr = mk.U32(0x20)
+        addr_fnord_arr = mk.U32(0x24)
 
     def repack(self):
         size_all = self.size_hdr
