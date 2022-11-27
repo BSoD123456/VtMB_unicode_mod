@@ -343,9 +343,9 @@ MOD_DLLS = {
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': [
             # a func which split text to multi lines, here find breakable position
-            (0x55066, [
-                
-            ]),
+##            (0x55066, [
+##                
+##            ]),
         ],
     },
 }
@@ -657,34 +657,34 @@ class c_pe_file(c_mark):
             else:
                 raise ValueError(report(f'invalid address 0x{addr:x}'))
 
-    def _shift_addr(self, mark, moffs, st_addr, elen_v):
+    def _shift_addr(self, mark, moffs, st_addr, ed_addr, elen_v):
         addr = mark.U32(moffs)
-        if addr >= st_addr:
+        if addr >= st_addr and (ed_addr is None or addr < ed_addr):
             addr += elen_v
             mark.W32(addr, moffs)
         return addr
 
-    def _shift_datdir_export(self, datdir_info, st_addr, elen_v):
+    def _shift_datdir_export(self, datdir_info, st_addr, ed_addr, elen_v):
         mk = datdir_info['mark']
         if mk.U32(0) != 0:
             raise ValueError(report(f'invalid export tab'))
-        addr_name = self._shift_addr(mk, 0xc, st_addr, elen_v)
+        addr_name = self._shift_addr(mk, 0xc, st_addr, ed_addr, elen_v)
         num_func = mk.U32(0x14)
         num_fname = mk.U32(0x18)
-        addr_func_arr = self._shift_addr(mk, 0x1c, st_addr, elen_v)
-        addr_fname_arr = self._shift_addr(mk, 0x20, st_addr, elen_v)
-        addr_fnord_arr = self._shift_addr(mk, 0x24, st_addr, elen_v)
+        addr_func_arr = self._shift_addr(mk, 0x1c, st_addr, ed_addr, elen_v)
+        addr_fname_arr = self._shift_addr(mk, 0x20, st_addr, ed_addr, elen_v)
+        addr_fnord_arr = self._shift_addr(mk, 0x24, st_addr, ed_addr, elen_v)
         sect_cache = {}
         sect_info, offs_sect = self._get_sect_by_addr(addr_func_arr, sect_cache)
         mk_s = sect_info['mark']
         for i in range(offs_sect, offs_sect + num_func * 0x4, 0x4):
-            self._shift_addr(mk_s, i, st_addr, elen_v)
+            self._shift_addr(mk_s, i, st_addr, ed_addr, elen_v)
         sect_info, offs_sect = self._get_sect_by_addr(addr_fname_arr, sect_cache)
         mk_s = sect_info['mark']
         for i in range(offs_sect, offs_sect + num_fname * 0x4, 0x4):
-            self._shift_addr(mk_s, i, st_addr, elen_v)
+            self._shift_addr(mk_s, i, st_addr, ed_addr, elen_v)
 
-    def _shift_datdir_import(self, datdir_info, st_addr, elen_v):
+    def _shift_datdir_import(self, datdir_info, st_addr, ed_addr, elen_v):
         mk = datdir_info['mark']
         szv = datdir_info['size_v']
         if szv % 0x14:
@@ -692,9 +692,9 @@ class c_pe_file(c_mark):
         sect_cache = {}
         flag_32plus = self.flag_32plus
         for i in range(0, szv - 0x14, 0x14): # last is empty
-            addr_ilt = self._shift_addr(mk, i, st_addr, elen_v)
-            addr_name = self._shift_addr(mk, i + 0xc, st_addr, elen_v)
-            addr_iat = self._shift_addr(mk, i + 0x10, st_addr, elen_v)
+            addr_ilt = self._shift_addr(mk, i, st_addr, ed_addr, elen_v)
+            addr_name = self._shift_addr(mk, i + 0xc, st_addr, ed_addr, elen_v)
+            addr_iat = self._shift_addr(mk, i + 0x10, st_addr, ed_addr, elen_v)
             for addr_tab in (addr_ilt, addr_iat):
                 sect_info, offs_sect = self._get_sect_by_addr(addr_tab, sect_cache)
                 mk_s = sect_info['mark']
@@ -715,7 +715,7 @@ class c_pe_file(c_mark):
                     if ti_flg:
                         report(f'warning: import tab by ord 0x{ti_addr:x}')
                         continue
-                    if ti_addr >= st_addr:
+                    if ti_addr >= st_addr and (ed_addr is None or ti_addr < ed_addr):
                         ti_addr += elen_v
                     if flag_32plus:
                         mk_s.W32(ti_addr, offs_idx)
@@ -724,14 +724,14 @@ class c_pe_file(c_mark):
                         mk_s.W32(ti_addr | ti_flg, offs_idx)
                         offs_idx += 0x4
 
-    def _shift_datdir_reloc(self, datdir_info, st_addr, elen_v):
+    def _shift_datdir_reloc(self, datdir_info, st_addr, ed_addr, elen_v):
         mk = datdir_info['mark']
         szv = datdir_info['size_v']
         idx = 0
         sect_cache = {}
         while idx < szv:
             tbase = mk.U32(idx)
-            if tbase >= st_addr:
+            if tbase >= st_addr and (ed_addr is None or tbase < ed_addr):
                 tbase += elen_v
                 mk.W32(tbase, idx)
                 tb_shift = True
@@ -744,7 +744,7 @@ class c_pe_file(c_mark):
                 rel_v = mk.U16(i)
                 rel_addr = (rel_v & 0xfff) + tbase
                 rel_flg = rel_v >> 12
-                if not tb_shift and rel_addr >= st_addr:
+                if not tb_shift and rel_addr >= st_addr and (ed_addr is None or rel_addr < ed_addr):
                     raise ValueError(report(
                         f'reloc item 0x{rel_addr:x} shift cross block 0x{tbase:x}'))
                 if rel_flg == 0:
@@ -753,7 +753,8 @@ class c_pe_file(c_mark):
                     sect_info, offs_sect = self._get_sect_by_addr(rel_addr, sect_cache)
                     mk_s = sect_info['mark']
                     s_addr = mk_s.U32(offs_sect)
-                    if s_addr - self.addr_base >= st_addr:
+                    s_addr_based = s_addr - self.addr_base
+                    if s_addr_based >= st_addr and (ed_addr is None or s_addr_based < ed_addr):
                         d_addr = s_addr + elen_v
                         mk_s.W32(d_addr, offs_sect)
                     #else:
@@ -764,14 +765,14 @@ class c_pe_file(c_mark):
             if idx > szv:
                 raise ValueError(report('invalid .reloc size'))
 
-    def _shift_datdir(self, idx, st_addr, elen_v):
+    def _shift_datdir(self, idx, st_addr, ed_addr, elen_v):
         datdir_info = self.tab_datdir[idx]
         if idx == 0:
-            self._shift_datdir_export(datdir_info, st_addr, elen_v)
+            self._shift_datdir_export(datdir_info, st_addr, ed_addr, elen_v)
         elif idx == 0x1:
-            self._shift_datdir_import(datdir_info, st_addr, elen_v)
+            self._shift_datdir_import(datdir_info, st_addr, ed_addr, elen_v)
         elif idx == 0x5:
-            self._shift_datdir_reloc(datdir_info, st_addr, elen_v)
+            self._shift_datdir_reloc(datdir_info, st_addr, ed_addr, elen_v)
         elif idx == 0xc:
             # IAT handled by import tab
             pass
@@ -779,13 +780,13 @@ class c_pe_file(c_mark):
             report(f'warning: not implemented datdir({idx}) shift')
             return NotImplemented
 
-    def _shift_datdir_tab(self, st_addr, elen_v):
+    def _shift_datdir_tab(self, st_addr, ed_addr, elen_v):
         mk = self.mark_opt_datdir
         for i, datdir_info in enumerate(self.tab_datdir):
-            if datdir_info['addr'] >= st_addr:
+            if datdir_info['addr'] >= st_addr and (ed_addr is None or datdir_info['addr'] < ed_addr):
                 datdir_info['addr'] += elen_v
                 datdir_info['mark_h'].W32(datdir_info['addr'], 0)
-                self._shift_datdir(i, st_addr, elen_v)
+                self._shift_datdir(i, st_addr, ed_addr, elen_v)
 
     def ext_sect(self, idx, dlen):
         if idx >= len(self.tab_sect):
@@ -817,11 +818,11 @@ class c_pe_file(c_mark):
             mkh.W32(sect_info['size_v'], 0x8)
         self._shift_sect(idx + 1, elen, elen_v)
         shift_st_addr = sect_info['addr'] + szva
-        self._shift_datdir_tab(shift_st_addr, elen_v)
+        self._shift_datdir_tab(shift_st_addr, None, elen_v)
         mkc = self.mark_opt_coff
-        self.addr_entry = self._shift_addr(mkc, 0x10, shift_st_addr, elen_v)
-        self.addr_code = self._shift_addr(mkc, 0x14, shift_st_addr, elen_v)
-        self.addr_data = self._shift_addr(mkc, 0x18, shift_st_addr, elen_v)
+        self.addr_entry = self._shift_addr(mkc, 0x10, shift_st_addr, None, elen_v)
+        self.addr_code = self._shift_addr(mkc, 0x14, shift_st_addr, None, elen_v)
+        self.addr_data = self._shift_addr(mkc, 0x18, shift_st_addr, None, elen_v)
         if sect_info['char']['code']:
             self.size_code += elen_v
             mkc.W32(self.size_code, 0x4)
@@ -852,6 +853,17 @@ class c_pe_file(c_mark):
             mk.W8(b, offs_sect + i)
         return offs_sect + sect_info['offs']
 
+    def _shift(self, mark, offs_sect, s_len, shft_len):
+        if shft_len < 0:
+            s_offs = offs_sect - shft_len
+            rng = range(s_offs, s_offs + s_len)
+        else:
+            s_offs = offs_sect
+            rng = range(s_offs + s_len - 1, s_offs - 1, -1)
+        for i in rng:
+            mark.W8(mark.U8(i), i + shft_len)
+        return s_offs, s_offs + shft_len
+
     def shift(self, s_st, s_len, shft_len):
         s_ed = s_st + s_len
         d_st = s_st + shft_len
@@ -860,15 +872,9 @@ class c_pe_file(c_mark):
         a_ed = max(s_ed, d_ed)
         sect_info, offs_sect = self._access(a_st, a_ed)
         mk = sect_info['mark']
-        if shft_len < 0:
-            s_offs = offs_sect - shft_len
-            rng = range(s_offs, s_offs + s_len)
-        else:
-            s_offs = offs_sect
-            rng = range(s_offs + s_len - 1, s_offs - 1, -1)
-        for i in rng:
-            mk.W8(mk.U8(i), i + shft_len)
-        return s_offs, s_offs + shft_len
+        r_st, r_ed = self._shift(mk, offs_sect, s_len, shft_len)
+        self._shift_datdir_tab(s_st, s_ed, shft_len)
+        return r_st, r_ed
 
     def _page_aligned_base(self, addr):
         page_len = 0x1000
