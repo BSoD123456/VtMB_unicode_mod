@@ -401,13 +401,6 @@ MOD_DLLS = {
     },
 }
 
-def asm_draw_char_patch():
-    return {
-        0x24af1c0: [
-            I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(0x123))
-        ],
-    }
-
 def hash_md5(val):
     return _md5(val).hexdigest()
 
