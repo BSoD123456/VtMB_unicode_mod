@@ -1044,20 +1044,6 @@ class c_pe_file(c_mark):
                     mk.W32(blk_lst_page_addr, idx)
                     mk.W32(blk_lst_rm_size + blk_entry_len, idx + 0x4)
 
-    def _repack_name_tab(self, mk, offs, num, name_add, name_del):
-        pass
-
-    def update_export(self, expt_add, expt_del):
-        datdir_info = self.tab_datdir[0x0]
-        mk = datdir_info['mark']
-        szv = datdir_info['size_v']
-        ord_base = mk.U32(0x10)
-        num_func = mk.U32(0x14)
-        num_fname = mk.U32(0x18)
-        addr_func_arr = mk.U32(0x1c)
-        addr_fname_arr = mk.U32(0x20)
-        addr_fnord_arr = mk.U32(0x24)
-
     def repack(self):
         size_all = self.size_hdr
         size_code = 0
