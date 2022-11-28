@@ -341,12 +341,63 @@ MOD_DLLS = {
         'path': 'Unofficial_Patch\cl_dlls',
         'file': 'client.dll',
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
-        'patch': [
+        'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
+            (code_ext - 1, b'\xcc\xcc'), # force extend code sect
             # a func which split text to multi lines, here find breakable position
-##            (0x55066, [
-##                
-##            ]),
-        ],
+            (0x55075, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
+            ]),
+            # mabe a bug, that make the 1st line shorter than others.
+            (0x550e3, [
+                I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.EDX, displ=-0x1, displ_size=1))
+            ]),
+            # hooks find breakable char
+            (code_ext + hooks[0], with_label_ctx(lambda lbc: [
+                I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),
+                I.create_reg_reg(C.XOR_R32_RM32, R.EAX, R.EAX),
+                I.create_reg_reg(C.XOR_R32_RM32, R.ECX, R.ECX),
+                I.create_reg_reg(C.XOR_R32_RM32, R.EBP, R.EBP),
+                # search loop
+                lbc.add('loop',
+                    I.create_reg_reg(C.TEST_RM8_R8, R.AH, R.AH),
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('uchar')),
+                I.create_reg_reg(C.XOR_RM8_R8, R.AH, R.AH),
+                # ebp = ecx - 1, for the next orig code edx = ebp + 1
+                I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.ECX, displ=-0x1, displ_size=1)),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('next')),
+                # not byte-2, is u-char
+                lbc.add('uchar',
+                    I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESI, index=R.ECX)),
+                ),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x80),
+                I.create_branch(C.JB_REL32_32, lbc.lb('ascii')),
+                # is byte-1
+                I.create_reg_u32(C.MOV_R8_IMM8, R.AH, 1),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('next')),
+                # is ascii
+                lbc.add('ascii',
+                    I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x20),
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('found')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x2d),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('next')),
+                # log breakable
+                lbc.add('found',
+                    I.create_reg_reg(C.MOV_R32_RM32, R.EBP, R.ECX),
+                ),
+                I.create_reg_reg(C.XOR_RM8_R8, R.AH, R.AH),
+                # next
+                lbc.add('next',
+                    I.create_reg(C.INC_R32, R.ECX),
+                ),
+                I.create_reg_reg(C.CMP_R32_RM32, R.ECX, R.EDX),
+                # the last char may be not space, should not check the last char
+                I.create_branch(C.JBE_REL32_32, lbc.lb('loop')),
+                # ret
+                I.create_branch(C.JMP_REL32_32, 0x55083),
+            ])),
+        ])(0x10000000, 0x1e3000, 0x683000, [0], [0x800]),
     },
 }
 
