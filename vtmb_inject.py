@@ -362,9 +362,21 @@ MOD_DLLS = {
                     I.create_reg_reg(C.TEST_RM8_R8, R.AH, R.AH),
                 ),
                 I.create_branch(C.JE_REL32_32, lbc.lb('uchar')),
-                I.create_reg_reg(C.XOR_RM8_R8, R.AH, R.AH),
-                # ebp = ecx - 1, for the next orig code edx = ebp + 1
-                I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.ECX, displ=-0x1, displ_size=1)),
+                # is byte-2
+##                I.create_reg_mem(C.LEA_R32_M, R.EAX, M(R.ECX, displ=0x1, displ_size=1)),
+##                I.create_reg_reg(C.CMP_R32_RM32, R.EAX, R.EDX),
+##                I.create_reg_u32(C.MOV_R32_IMM32, R.EAX, 0x0), # clear AH, but do not set condi
+##                I.create_branch(C.JAE_REL32_32, lbc.lb('log_b2')),
+                I.create_reg_reg(C.XOR_R8_RM8, R.AH, R.AH),
+                # check punctuation
+                I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESI, index=R.ECX, displ=0x1, displ_size=1)),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.AL, 0xa1),
+                I.create_branch(C.JB_REL32_32, lbc.lb('log_b2')),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.AL, 0xa9),
+                I.create_branch(C.JBE_REL32_32, lbc.lb('next')),
+                lbc.add('log_b2',
+                    I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.ECX, displ=0x1, displ_size=1)),
+                ),
                 I.create_branch(C.JMP_REL32_32, lbc.lb('next')),
                 # not byte-2, is u-char
                 lbc.add('uchar',
@@ -393,7 +405,7 @@ MOD_DLLS = {
                 ),
                 I.create_reg_reg(C.CMP_R32_RM32, R.ECX, R.EDX),
                 # the last char may be not space, should not check the last char
-                I.create_branch(C.JBE_REL32_32, lbc.lb('loop')),
+                I.create_branch(C.JB_REL32_32, lbc.lb('loop')),
                 # ret
                 I.create_branch(C.JMP_REL32_32, 0x55083),
             ])),
