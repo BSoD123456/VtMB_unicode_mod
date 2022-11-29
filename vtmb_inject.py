@@ -342,7 +342,7 @@ MOD_DLLS = {
         'file': 'client.dll',
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
-            (code_ext - 1, b'\xcc\xcc'), # force extend code sect
+            #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
             # a func which split text to multi lines, here find breakable position
             (0x55075, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
@@ -409,7 +409,7 @@ MOD_DLLS = {
                 # ret
                 I.create_branch(C.JMP_REL32_32, 0x55083),
             ])),
-        ])(0x10000000, 0x1e3000, 0x683000, [0], [0x800]),
+        ])(0x10000000, 0x1e3000, 0x683000, [-0x400], []),
     },
 }
 
@@ -1197,7 +1197,11 @@ class c_pe_patcher:
         except:
             return False
         dinfo['pe'] = pe
-        dinfo['patch'] = sinfo['patch']
+        if 'en' in sinfo and not sinfo['en']:
+            #bypass
+            dinfo['patch'] = []
+        else:
+            dinfo['patch'] = sinfo['patch']
         self.dst_info[name] = dinfo
         return True
 
