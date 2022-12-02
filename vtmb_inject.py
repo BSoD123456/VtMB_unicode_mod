@@ -351,6 +351,40 @@ MOD_DLLS = {
             (0x550e3, [
                 I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.EDX, displ=-0x1, displ_size=1))
             ]),
+            # subtitle linebreak modify
+##            (0xf2254, with_label_ctx(lambda lbc: [
+##                I.create_reg(C.PUSH_R32, R.ESI),
+##                I.create_reg(C.PUSH_R32, R.EDI),
+##                I.create_reg_mem(C.MOV_R32_RM32, R.ESI, M(R.EBP, displ=-0x10, displ_size=1)),
+##                I.create_reg_mem(C.LEA_R32_M, R.EDI, M(R.EBP, displ=-0x4030, displ_size=4)),
+##                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.EBP, displ=-0xc, displ_size=1)),
+##                I.create_mem_reg(C.MOV_RM32_R32, M(R.EBP, displ=-0x202c, displ_size=4), R.ECX),
+##                I.create_reg_reg(C.XOR_R32_RM32, R.EDX, R.EDX),
+##                # loop
+##                lbc.add('loop',
+##                    I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESI, index=R.EDX)),
+##                ),
+##                I.create_mem_reg(C.MOV_RM8_R8, M(R.EDI), R.AL),
+##                I.create_reg_reg(C.CMP_R32_RM32, R.ECX, R.EDX),
+##                I.create_branch(C.JNE_REL32_32, lbc.lb('next')),
+##                I.create_reg(C.INC_R32, R.EDI),
+##                I.create_mem_u32(C.MOV_RM8_IMM8, M(R.EDI), 0),
+##                I.create_mem(C.INC_RM32, M(R.EBP, displ=-0x14, displ_size=1)),
+##                I.create_mem(C.INC_RM32, M(R.EBP, displ=-0xc, displ_size=1)),
+##                I.create_mem(C.INC_RM32, M(R.EBP, displ=-0x202c, displ_size=4)),
+##                lbc.add('next',
+##                    I.create_reg(C.INC_R32, R.EDI),
+##                ),
+##                I.create_reg(C.INC_R32, R.EDX),
+##                I.create_reg_reg(C.TEST_RM8_R8, R.AL, R.AL),
+##                I.create_branch(C.JNE_REL32_32, lbc.lb('loop')),
+##                # end
+##                I.create_reg(C.POP_R32, R.EDI),
+##                I.create_reg(C.POP_R32, R.ESI),
+##                I.create_branch(C.JMP_REL32_32, 0xf22e2),
+##                I.create(C.NOPD),
+##                I.create(C.NOPD),
+##            ])),
             # hooks find breakable char
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),

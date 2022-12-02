@@ -251,3 +251,73 @@ vguimatsurface:025E0000
   1C8850D6 -> client.1C8856D0 # get limited max char len (second)
   1C8850E6 # loop end
 
+
+
+loading tips:
+0228586E -> vguimatsurface.2285DC0 # m_FontAmalgams[font].GetFontForChar(ch)
+
+
+print subtitle:
+
+1CFE2849 -> client.1CFE9EF0 # draw text
+  1CFE9F7E -> client.1D0034F4 # copy text to local stack buff
+  1CFEA087 # check space and newline ?
+  1CFEA0F6 # loop here
+  1CFEA168 -> vguimatsurface.0279F040 # CMatSystemSurface::GetCharABCwide
+  1CFEA1CC -> vguimatsurface.0279F1C0 # DrawUnicodeChar
+  1CFEA203 # loop end
+
+1CF222F0 -> call client.1CF21FB0
+  1CF21FFA -> call client.1CF22060
+    1CF223CA -> client.1CFE23F0
+      1CFE2408 -> client.1CFE9C70
+        1CFE9D3D -> client.1CFE9D70
+          1CFE9DB5 -> call client.1D0034CF
+            1D0034E8 # mov text to buff for draw
+          1CFE9DCF ->
+            1CFEA796 # cmp "\n" ?
+
+engine.201189E4 -> client.1CF04440
+  1CF0446F -> call client.1CF21FB0 (some_hndl?, src_subtitle_text_ansi)
+    1CF21FB8 -> call client.1D000F00 (subtitle_name_text)
+    1CF21FD2 -> call client.1D002BC3 # text to another buff in stack, maybe with some handle
+    1CF21FFA -> call client.1CF22060 # handle the text in stack
+      1CF22068 -> call client.1D000F00 # the same with above
+      1CF2207C # search EOS(\0)
+      1CF22083 # get text length
+      1CF22099 # get text last BYTE
+      1CF220A1 # if text[-1] == '\n' then text[-1] = '\0'
+      
+      1CF220C0 # loop here for skip head '\n' '\x01' '\x02'
+      1CF220C3 # read a signed char from text by ecx to edx
+      1CF220D3 # if text[i] != '\n' then:
+      1CF220DE # if text[i] != '\x01' then:
+      1CF220E9 # (with above from i=0) if text[i] == '\n' or text[i] == '\x01' or text[i] == '\x02' then i+=1
+      1CF220F4 # loop end
+      
+      1CF2210E -> call client.1D001300 (some_global?, stack_text_ansi) # check some (tail) pattern in text ?
+      
+      1CF22236 -> call client.1CF21EE0 (some_hndl?(:ecx), limit_width?, text, text_len) # find breakline point, ret to eax
+        (1D131EE0 # cur func base)
+        1D131EFF # loop here for find linebreak
+        1D131F22 # if signed_char <= ' '(0x20) then log current char_pos
+        1D131F46 -> vguimatsurface.0206F070 # CMatSystemSurface::GetCharacterWidth
+        1D131F5A # if cur_width >= limit_width then:
+        1D131F62 # if logged char_pos == text_len then char_pos = text_len
+        1D131F86 # break loop
+        1D131F88 # else: loop end
+        1D131F93 # if cur_width >= limit_width then: return char_pos
+        1D131F9A # else: return text_len
+        
+      1CF22275 # loop here
+      copy src_txt:[ebp-0x4050] to dst_txt:[ebp-0x4054]
+      1CF222B6 # loop end
+      1CF222DA # split dst_txt by pos:[ebp+edx-4030], edx from above:client.1CF21EE0's eax return
+      
+      1CF222F0 -> call client.1CF21FB0 (some_hndl?, another_stack_buffed_text_ansi)
+      1CF2234B -> call client.1CF21FB0 (some_hndl?, another_stack_buffed_text_ansi_but_splited_to_next)
+      ...
+        1CF2234B -> call client.1CF21FB0
+          1CF21FFA -> call client.1CF22060
+            1CF2234B -> call client.1CF21FB0
+
