@@ -279,7 +279,7 @@ print subtitle:
 
 engine.201189E4 -> client.1CF04440
   1CF0446F -> call client.1CF21FB0 (some_hndl?, src_subtitle_text_ansi)
-    1CF21FB8 -> call client.1D000F00 (subtitle_name_text)
+    1CF21FB8 -> call client.1D000F00 (subtitle_name_text) # alloc stack to ebp with size:eax
     1CF21FD2 -> call client.1D002BC3 # text to another buff in stack, maybe with some handle
     1CF21FFA -> call client.1CF22060 # handle the text in stack
       1CF22068 -> call client.1D000F00 # the same with above
