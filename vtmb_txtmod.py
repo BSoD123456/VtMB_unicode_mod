@@ -53,20 +53,17 @@ class c_parser:
     def load(self, path):
         with open(path, 'rb') as fd:
             raw = fd.read()
-        for codec in self.rdcfg('codec', default=['windows-1250']):
-            try:
-                self.txt = raw.decode(codec)
-                self.codec = codec
-                break
-            except:
-                pass
-        else:
-            raise UnicodeDecodeError(report('no valid codec for {path}'))
+        codec = self.rdcfg('s_codec', 'codec', default='ascii')
+        try:
+            self.txt = raw.decode(codec)
+        except:
+            raise ValueError(report('no valid codec for {path}'))
 
     def save(self, path):
         if not self.dirty:
             return False
-        mod = self.txt.encode(self.codec)
+        codec = self.rdcfg('d_codec', 'codec', default='ascii')
+        mod = self.txt.encode(codec)
         with open(path, 'wb') as fd:
             fd.write(mod)
         return True
@@ -243,7 +240,8 @@ class c_txt_mod:
 MOD_TXTS = {
     'dlg': {
         'parser': c_dlg_parser,
-        'codec': ['gbk', 'windows-1250'],
+        's_codec': 'windows-1250',
+        'd_codec': 'gbk',
         'newline': '\r\n',
     },
 }
