@@ -71,7 +71,7 @@ class c_parser:
     def parse(self):
         return NotImplemented
 
-    def fix(self):
+    def modify(self):
         return NotImplemented
 
 class c_dlg_parser(c_parser):
@@ -134,6 +134,184 @@ class c_dlg_parser(c_parser):
         if dirty:
             self.txt = self.rdcfg('newline', default='\n').join(rs)
             self.dirty = True
+        return dirty
+
+class c_lip_parser(c_parser):
+
+    def _parse_sect(self):
+        cur = []
+        stack = []
+        title = None
+        for li, line in enumerate(self.txt.splitlines()):
+            li += 1
+            if not line:
+                continue
+            elif line == '{':
+                if title is None:
+                    raise ValueError(report(f'invalid lip sector at line {li}'))
+                nsct = []
+                cur.append((title, nsct))
+                stack.append(cur)
+                cur = nsct
+                title = None
+            elif line == '}':
+                if not title is None:
+                    cur.append(title)
+                if not stack:
+                    raise ValueError(report(f'invalid lip sector at line {li}'))
+                cur = stack.pop()
+                title = None                
+            else:
+                if ('{' in line or '}' in line) and not len(re.findall(r'\{.+\}', line)) == line.count('{') == line.count('}'):
+                    raise ValueError(report(f'invalid lip sector at line {li}'))
+                if not title is None:
+                    cur.append(title)
+                title = line
+        if not title is None:
+            cur.append(title)
+        if stack:
+            raise ValueError(report(f'invalid lip sector at line {li}'))
+        return cur
+
+    def _find_sect(self, sect, keys, idx = 0):
+        r = {}
+        for v in sect:
+            if not isinstance(v, tuple):
+                continue
+            k, ctt = v
+            for key in keys:
+                ks = key.split('/')
+                if len(ks) <= idx:
+                    continue
+                if ks[idx] == k:
+                    if idx + 1 < len(ks):
+                        nr = self._find_sect(ctt, keys, idx + 1)
+                        for nk, nv in nr.items():
+                            if nk in r:
+                                raise ValueError(report(f'dumplicate sector {nk}'))
+                            r[nk] = nv
+                    else:
+                        if key in r:
+                            raise ValueError(report(f'dumplicate sector {key}'))
+                        r[key] = ctt
+        return r
+
+    def _parse_txt(self, line):
+        cch = [0]
+        llen = len(line)
+        def get_word():
+            ed = llen
+            if cch[0] >= llen:
+                breakpoint()
+            for i in range(cch[0], llen):
+                c = line[i]
+                if c == ' ':
+                    ed = i
+                    break
+            r = line[cch[0]:ed]
+            cch[0] = i + 1
+            return r
+        def get_quote_a():
+            if not line[cch[0]] == '"':
+                raise ValueError(report(f'invalid text line: {line}'))
+            cch[0] += 1
+            ed = None
+            for i in range(cch[0], llen):
+                c = line[i]
+                if c == '"':
+                    ed = i
+            if ed is None:
+                raise ValueError(report(f'invalid text line: {line}'))
+            r = line[cch[0]:ed]
+            cch[0] = ed + 2
+            return r
+        def get_quote_u():
+            if not line[cch[0]] == '"':
+                raise ValueError(report(f'invalid text line: {line}'))
+            cch[0] += 2
+            rs = []
+            ed = None
+            for i in range(cch[0], llen):
+                c = line[i]
+                if c == '"' and not (i - cch[0])%2:
+                    ed = i
+            if ed is None:
+                raise ValueError(report(f'invalid text line: {line}'))
+            r = line[cch[0]:ed]
+            cch[0] = ed + 3
+            codec = self.rdcfg('s_codec', 'codec', default='ascii')
+            return r.encode(codec).decode('utf-16le')
+        if not get_word() == 'PHRASE':
+            raise ValueError(report(f'invalid text line: {line}'))
+        typ = get_word()
+        if not typ in ['char', 'unicode']:
+            raise ValueError(report(f'invalid text line: {line}'))
+        clen = get_word()
+        if not clen.isdigit():
+            raise ValueError(report(f'invalid text line: {line}'))
+        clen = int(clen)
+        if clen == 0:
+            return ''
+        if typ == 'char':
+            txt = get_quote_a()
+        else:
+            txt = get_quote_u()
+        try:
+            float(get_word())
+            float(get_word())
+        except:
+            raise ValueError(report(f'invalid text line: {line}'))
+        #check clen
+        return txt
+
+    def parse(self):
+        dirty = False
+        sect = self._parse_sect()
+        dst_sects = self._find_sect(sect, ['english', 'OPTIONS', 'CLOSECAPTION/english'])
+        if 'english' in dst_sects and 'CLOSECAPTION/english' in dst_sects:
+            raise ValueError(report(f'dumplicate sector english'))
+        elif 'english' in dst_sects:
+            txt_sect = dst_sects['english']
+        elif 'CLOSECAPTION/english' in dst_sects:
+            txt_sect = dst_sects['CLOSECAPTION/english']
+        else:
+            return False
+        if not 'OPTIONS' in dst_sects:
+            raise ValueError(report(f'missing sector OPTIONS'))
+        else:
+            opt_sect = dst_sects['OPTIONS']
+        spk_name = None
+        for line in opt_sect:
+            if not isinstance(line, str):
+                raise ValueError(report(f'invalid sect item: {line}'))
+            opt = line.split()
+            if len(opt) < 1:
+                raise ValueError(report(f'invalid option item: {line}'))
+            elif len(opt) == 1:
+                k = opt[0]
+                v = ''
+            elif len(opt) > 2:
+                k = opt[0]
+                v = line[len(k)+1:]
+            else:
+                k, v = opt
+            if k == 'speaker_name':
+                spk_name = v
+                break
+        if spk_name is None:
+            raise ValueError(report(f'missing speaker_name'))
+        if len(txt_sect) != 1:
+            raise ValueError(report(f'invalid sector english'))
+        line = txt_sect[0]
+        if not isinstance(line, str):
+            raise ValueError(report(f'invalid sect item: {line}'))
+        line = self._parse_txt(line)
+        if not spk_name in self.dat:
+            self.dat[spk_name] = ''
+            dirty = True
+        if not line in self.dat:
+            self.dat[line] = ''
+            dirty = True
         return dirty
 
 class c_txt_mod:
@@ -212,7 +390,11 @@ class c_txt_mod:
                     psr.load(bfpath)
                 else:
                     psr.load(afpath)
-            self.dirty |= psr.parse()
+            try:
+                self.dirty |= psr.parse()
+            except Exception as ex:
+                report(f'error at {fpath}')
+                raise ex
 
     def parse(self):
         self._parse('')
@@ -240,6 +422,12 @@ class c_txt_mod:
 MOD_TXTS = {
     'dlg': {
         'parser': c_dlg_parser,
+        's_codec': 'windows-1250',
+        'd_codec': 'gbk',
+        'newline': '\r\n',
+    },
+    'lip': {
+        'parser': c_lip_parser,
         's_codec': 'windows-1250',
         'd_codec': 'gbk',
         'newline': '\r\n',
