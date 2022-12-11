@@ -28,6 +28,8 @@ TM_CFG = {
     'codec': 'utf-8',
 }
 
+SYM_NOQUOTE = '@'
+
 def report(*args):
     r = ' '.join(args)
     print(r)
@@ -42,6 +44,17 @@ class c_parser:
         self.cfg = cfg
         self.dat = dat
         self.dirty = False
+        self._warning = False
+
+    def warning(self, *args):
+        report('warning:', *args)
+        self._warning = True
+
+    @property
+    def is_warning(self):
+        r = self._warning
+        self._warning = False
+        return r
 
     def rdcfg(self, *keys, default = None):
         cfg = self.cfg
@@ -50,20 +63,26 @@ class c_parser:
                 return cfg[k]
         return default
 
+    @property
+    def s_codec(self):
+        return self.rdcfg('s_codec', 'codec', default='ascii')
+
+    @property
+    def d_codec(self):
+        return self.rdcfg('d_codec', 'codec', default='ascii')
+
     def load(self, path):
         with open(path, 'rb') as fd:
             raw = fd.read()
-        codec = self.rdcfg('s_codec', 'codec', default='ascii')
         try:
-            self.txt = raw.decode(codec)
+            self.txt = raw.decode(self.s_codec)
         except:
             raise ValueError(report('no valid codec for {path}'))
 
     def save(self, path):
         if not self.dirty:
             return False
-        codec = self.rdcfg('d_codec', 'codec', default='ascii')
-        mod = self.txt.encode(codec)
+        mod = self.txt.encode(self.d_codec)
         with open(path, 'wb') as fd:
             fd.write(mod)
         return True
@@ -93,7 +112,7 @@ class c_dlg_parser(c_parser):
                     continue
                 if ri == 0:
                     if s != lis:
-                        report('warning: missing line {lis}/{s}')
+                        self.warning('missing line {lis}/{s}')
                         li = int(s)
                 elif ri <= 2:
                     if not s in pair:
@@ -111,7 +130,7 @@ class c_dlg_parser(c_parser):
         for line in self.txt.splitlines():
             m = re.search(rpatt_idx, line)
             if not m:
-                report('warning: invalid line index:\n{line}')
+                self.warning('invalid line index:\n{line}')
                 rs.append(line)
                 continue
             lis = m.group(1)
@@ -197,13 +216,11 @@ class c_lip_parser(c_parser):
         return r
 
     def _parse_txt(self, line):
-        cch = [0]
-        llen = len(line)
+        line_repr = line.encode('unicode_escape').decode('ansi')
+        cch = [0, len(line)]
         def get_word():
-            ed = llen
-            if cch[0] >= llen:
-                breakpoint()
-            for i in range(cch[0], llen):
+            ed = cch[1]
+            for i in range(cch[0], cch[1]):
                 c = line[i]
                 if c == ' ':
                     ed = i
@@ -211,57 +228,54 @@ class c_lip_parser(c_parser):
             r = line[cch[0]:ed]
             cch[0] = i + 1
             return r
-        def get_quote_a():
-            if not line[cch[0]] == '"':
-                raise ValueError(report(f'invalid text line: {line}'))
-            cch[0] += 1
-            ed = None
-            for i in range(cch[0], llen):
+        def get_word_r():
+            st = cch[0]
+            while line[cch[1]-1] == ' ':
+                cch[1] -= 1
+            for i in range(cch[1]-1, cch[0]-1, -1):
                 c = line[i]
-                if c == '"':
-                    ed = i
-            if ed is None:
-                raise ValueError(report(f'invalid text line: {line}'))
-            r = line[cch[0]:ed]
-            cch[0] = ed + 2
+                if c == ' ':
+                    st = i
+                    break
+            r = line[st:cch[1]]
+            cch[1] = i
             return r
-        def get_quote_u():
-            if not line[cch[0]] == '"':
-                raise ValueError(report(f'invalid text line: {line}'))
-            cch[0] += 2
-            rs = []
-            ed = None
-            for i in range(cch[0], llen):
-                c = line[i]
-                if c == '"' and not (i - cch[0])%2:
-                    ed = i
-            if ed is None:
-                raise ValueError(report(f'invalid text line: {line}'))
-            r = line[cch[0]:ed]
-            cch[0] = ed + 3
-            codec = self.rdcfg('s_codec', 'codec', default='ascii')
-            return r.encode(codec).decode('utf-16le')
         if not get_word() == 'PHRASE':
-            raise ValueError(report(f'invalid text line: {line}'))
+            raise ValueError(report(f'invalid text line: {line_repr}'))
         typ = get_word()
         if not typ in ['char', 'unicode']:
-            raise ValueError(report(f'invalid text line: {line}'))
+            raise ValueError(report(f'invalid text line: {line_repr}'))
         clen = get_word()
         if not clen.isdigit():
-            raise ValueError(report(f'invalid text line: {line}'))
+            raise ValueError(report(f'invalid text line: {line_repr}'))
         clen = int(clen)
-        if clen == 0:
-            return ''
-        if typ == 'char':
-            txt = get_quote_a()
-        else:
-            txt = get_quote_u()
         try:
-            float(get_word())
-            float(get_word())
+            float(get_word_r())
+            float(get_word_r())
         except:
-            raise ValueError(report(f'invalid text line: {line}'))
-        #check clen
+            raise ValueError(report(f'invalid text line: {line_repr}'))
+        txt = line[cch[0]:cch[1]]
+        if len(txt) != clen:
+            self.warning(f'unmatch text length {len(txt)}/{clen}: {line_repr}')
+        if typ == 'unicode':
+            try:
+                txt = txt.encode(self.s_codec).decode('utf-16le')
+            except:
+                self.warning(f'invalid utf-16le encoding: {line_repr}')
+                txtcs = []
+                for c in txt:
+                    if c != '\0':
+                        txtcs.append(c)
+                txt = ''.join(txtcs)
+        txt = txt.strip()
+        if not txt:
+            return txt
+        if len(txt) >= 2 and txt[0] == txt[-1] == '"':
+            if txt[1] == SYM_NOQUOTE:
+                raise ValueError(report(r'symbole-noquote is dumplicated'))
+            txt = txt[1:-1]
+        else:
+            txt = SYM_NOQUOTE + txt
         return txt
 
     def parse(self):
@@ -393,8 +407,10 @@ class c_txt_mod:
             try:
                 self.dirty |= psr.parse()
             except Exception as ex:
-                report(f'error at {fpath}')
+                report(f'above error at {fpath}')
                 raise ex
+            if psr.is_warning:
+                report(f'above warning at {fpath}')
 
     def parse(self):
         self._parse('')
