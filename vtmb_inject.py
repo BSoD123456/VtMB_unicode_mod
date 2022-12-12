@@ -406,6 +406,11 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, 0xf22e2),
                 #I.create(C.NOPD),
             ])),
+            # make a line start position table in draw_text_info
+            (0x1aea1d, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
+                I.create(C.NOPD),
+            ]),
             # hooks find breakable char
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),
@@ -464,7 +469,24 @@ MOD_DLLS = {
                 # ret
                 I.create_branch(C.JMP_REL32_32, 0x55083),
             ])),
-        ])(0x10000000, 0x1e3000, 0x683000, [-0x400], []),
+            # hooks record line start position in draw_text_info
+            (code_ext + hooks[1], with_label_ctx(lambda lbc: [
+                I.create_mem_reg(C.MOV_RM32_R32, M(R.ECX, index=R.EAX, scale=4), R.EBX),
+                I.create_reg(C.PUSH_R32, R.EAX),
+                I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESP, displ=0x1c, displ_size=1)),
+                # 0xa0 can only make gb2312 working, not gbk ext
+                # but 0x80 still can not make gbk ext working currectly
+                # whatever, 0x80 is more flexible than 0xa0
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x80),
+                I.create_reg(C.POP_R32, R.EAX),
+                I.create_branch(C.JB_REL32_32, lbc.lb('pass')),
+                I.create_mem(C.DEC_RM32, M(R.ECX, index=R.EAX, scale=4)),
+                lbc.add('pass',
+                    I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.EBP)),
+                ),
+                I.create_branch(C.JMP_REL32_32, 0x1aea23),
+            ])),
+        ])(0x10000000, 0x1e3000, 0x683000, [-0x400, -0x300], []),
     },
 }
 

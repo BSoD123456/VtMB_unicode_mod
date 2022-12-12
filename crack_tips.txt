@@ -66,6 +66,17 @@ vgui2.0054C0F0: parse format to value
 60F81C4E jmp bugs_fix.60F81BD9  frame loop
 gameui.050F5C89 ->
 1E359C34 -> client.1E35DB60 # draw text ?
+
+  (1C830000)
+  1C9DDC65 -> client.1C9E10E0 # get page split position
+    1C9E119B # read line start pos in tab[esi+6c], [esi+64] is max lines num.
+  
+  1C9DDEE9 # page split(align?) loop here, [esi+58] is text length
+  1C9DDF13 -> client.1C9E1050 # call some method in esi object, but do nothing here. bypassed directly.
+  1C9DDF1E # compare with edi, this is actually the split position.
+  1C9DDF24 # loop end
+  
+  
   1E35DF31 before loop, once per text, [ESI] is text_hndl, [ESI+60] is dest buff
   1E35DF37 loop start
   1E35DF43 read char from dest buff EVERY FRAME
@@ -88,6 +99,33 @@ gameui.050F5C89 ->
           vguimatsurface.024ADCF0 -> shaderapidx9.2A013EC0
           ... -> shaderapidx9
   1E35E107 jl client.1E35DF37 # loop end
+
+
+make draw text object(esi above):
+(1C830000)
+
+text copy
+1C9DD1D3 # loop here, copy text to esi object. read char from source buff
+1C9DD1D9 # write char to stack buff
+1C9DD261 # read char from stack buff
+1C9DD266 # write char to [esi+60]buff
+1C9DD266 # loop end
+
+line position (logged above, but no detail)
+1C9DE7DF # loop start. edi is that text object, esi=edi+58 aka text length member ptr.
+1C9DE7F2 # read char from text buff([edi+60]/[esi+8])
+1C9DE8C5 -> client.1CA01863 (src_char) # get charset flags
+1C9DE98F -> client.1C9DD550 # get char width
+1C9DE999 -> Q_isprint
+1C9DE9B9 # compare ecx(current width) and eax(limit width)
+1C9DE9C1 # check "\r"
+1C9DE9C5 # check "\n"
+1C9DE9CD # log line start position from here
+1C9DE9DB -> client.1C9DE610
+  1C9DE632 -> vguimatsurface.0313F020 # GetFontTall
+1C9DEA1D # write line start position to tab[edi+6c]
+1C9DEBEF # loop end
+
 
 
 1E359CE5 -> client.1E359B80
