@@ -21,6 +21,8 @@ import shutil
 import re
 import json
 
+WORK_FILE = 'output.json'
+
 TM_CFG = {
     'mod': r'G:\GOG Games\VtMB\Unofficial_Patch',
     'bak': r'G:\GOG Games\VtMB\trans_bak',
@@ -46,7 +48,9 @@ class c_parser:
         self.dirty = False
         self._warning = False
 
-    def warning(self, *args):
+    def warning(self, src, *args):
+        if self.rdcfg(src + '_no_warning', 'no_warning', default=False):
+            return
         report('warning:', *args)
         self._warning = True
 
@@ -112,7 +116,7 @@ class c_dlg_parser(c_parser):
                     continue
                 if ri == 0:
                     if s != lis:
-                        self.warning('missing line {lis}/{s}')
+                        self.warning('parse', 'missing line {lis}/{s}')
                         li = int(s)
                 elif ri <= 2:
                     if not s in pair:
@@ -130,7 +134,7 @@ class c_dlg_parser(c_parser):
         for line in self.txt.splitlines():
             m = re.search(rpatt_idx, line)
             if not m:
-                self.warning('invalid line index:\n{line}')
+                self.warning('modify', 'invalid line index:\n{line}')
                 rs.append(line)
                 continue
             lis = m.group(1)
@@ -215,8 +219,13 @@ class c_lip_parser(c_parser):
                         r[key] = ctt
         return r
 
-    def _parse_txt(self, line):
+    def _parse_txt(self, line, nowarning = False, ret_hdtl = False):
         line_repr = line.encode('unicode_escape').decode('ansi')
+        if len(line) > 40:
+            line_repr_brief = '...'.join([line[7:25], line[-15:]])
+        else:
+            line_repr_brief = line[7:]
+        line_repr_brief = line_repr_brief.encode('unicode_escape').decode('ansi')
         cch = [0, len(line)]
         def get_word():
             ed = cch[1]
@@ -242,6 +251,7 @@ class c_lip_parser(c_parser):
             return r
         if not get_word() == 'PHRASE':
             raise ValueError(report(f'invalid text line: {line_repr}'))
+        hd = line[:cch[0]]
         typ = get_word()
         if not typ in ['char', 'unicode']:
             raise ValueError(report(f'invalid text line: {line_repr}'))
@@ -254,14 +264,16 @@ class c_lip_parser(c_parser):
             float(get_word_r())
         except:
             raise ValueError(report(f'invalid text line: {line_repr}'))
+        tl = line[cch[1]:]
         txt = line[cch[0]:cch[1]]
-        if len(txt) != clen:
-            self.warning(f'unmatch text length {len(txt)}/{clen}: {line_repr}')
+        if len(txt) != clen and not nowarning:
+            self.warning('parse', f'unmatch text length {len(txt)}/{clen}: {line_repr_brief}')
         if typ == 'unicode':
             try:
                 txt = txt.encode(self.s_codec).decode('utf-16le')
             except:
-                self.warning(f'invalid utf-16le encoding: {line_repr}')
+                if not nowarning:
+                    self.warning('parse', f'invalid utf-16le encoding: {line_repr_brief}')
                 txtcs = []
                 for c in txt:
                     if c != '\0':
@@ -269,19 +281,25 @@ class c_lip_parser(c_parser):
                 txt = ''.join(txtcs)
         txt = txt.strip()
         if not txt:
-            return txt
+            if ret_hdtl:
+                return txt, hd, tl
+            else:
+                return txt
         if len(txt) >= 2 and txt[0] == txt[-1] == '"':
             if txt[1] == SYM_NOQUOTE:
                 raise ValueError(report(r'symbole-noquote is dumplicated'))
             txt = txt[1:-1]
         else:
             txt = SYM_NOQUOTE + txt
-        return txt
+        if ret_hdtl:
+            return txt, hd, tl
+        else:
+            return txt
 
     def parse(self):
         dirty = False
-        sect = self._parse_sect()
-        dst_sects = self._find_sect(sect, ['english', 'OPTIONS', 'CLOSECAPTION/english'])
+        self.sect = self._parse_sect()
+        dst_sects = self._find_sect(self.sect, ['english', 'OPTIONS', 'CLOSECAPTION/english'])
         if 'english' in dst_sects and 'CLOSECAPTION/english' in dst_sects:
             raise ValueError(report(f'dumplicate sector english'))
         elif 'english' in dst_sects:
@@ -310,7 +328,7 @@ class c_lip_parser(c_parser):
             else:
                 k, v = opt
             if k == 'speaker_name':
-                spk_name = v
+                spk_name = v.strip()
                 break
         if spk_name is None:
             raise ValueError(report(f'missing speaker_name'))
@@ -327,6 +345,48 @@ class c_lip_parser(c_parser):
             self.dat[line] = ''
             dirty = True
         return dirty
+
+    def _replace_content(self, path, content):
+        if path in ['english', 'CLOSECAPTION/english']:
+            stxt, shd, stl = self._parse_txt(content, True, True)
+            if stxt in self.dat and self.dat[stxt]:
+                dtxt = self.dat[stxt]
+                if dtxt[0] != SYM_NOQUOTE:
+                    dtxt = '"' + dtxt + '"'
+                dlen = len(dtxt.encode(self.d_codec))
+                self.dirty = True
+                return ''.join([shd, f'char {dlen} ', dtxt, stl])
+        elif path == 'OPTIONS':
+            hd = 'speaker_name '
+            if content.startswith(hd):
+                stxt = content[len(hd):].strip()
+                if stxt in self.dat and self.dat[stxt]:
+                    self.dirty = True
+                    return hd + self.dat[stxt]
+        return content
+
+    def _pack_sect(self, sect, path, rs):
+        for v in sect:
+            if not isinstance(v, tuple):
+                nctt = self._replace_content(path, v)
+                rs.append(nctt)
+                continue
+            k, ctt = v
+            rs.append(k)
+            rs.append('{')
+            if path:
+                npath = '/'.join([path, k])
+            else:
+                npath = k
+            self._pack_sect(ctt, npath, rs)
+            rs.append('}')
+
+    def modify(self):
+        rs = []
+        self._pack_sect(self.sect, None, rs)
+        if self.dirty:
+            self.txt = self.rdcfg('newline', default='\n').join(rs)
+        return self.dirty
 
 class c_txt_mod:
 
@@ -447,12 +507,13 @@ MOD_TXTS = {
         's_codec': 'windows-1250',
         'd_codec': 'gbk',
         'newline': '\r\n',
+        'parse_no_warning': True,
     },
 }
 
 if __name__ == '__main__':
     from pprint import pprint as ppr
-    tm = c_txt_mod(TM_CFG, MOD_TXTS, 'output.json')
+    tm = c_txt_mod(TM_CFG, MOD_TXTS, WORK_FILE)
     tm.parse()
     tm.modify()
     tm.save()
