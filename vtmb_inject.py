@@ -32,8 +32,10 @@ pip install iced-x86
 ''')
     sys.exit()
 
+from glbcfg import GLB_CFG
+
 PP_CFG = {
-    'root': r'G:\GOG Games\VtMB',
+    'root': GLB_CFG.rdcfg('game'),
     'bitness': 32,
 }
 

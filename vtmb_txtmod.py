@@ -21,12 +21,14 @@ import shutil
 import re
 import json
 
+from glbcfg import GLB_CFG
+
 WORK_FILE = 'output.json'
 
 TM_CFG = {
-    'mod': r'G:\GOG Games\VtMB\Unofficial_Patch',
-    'bak': r'G:\GOG Games\VtMB\trans_bak',
-    'work': '.',
+    'mod': os.path.join(GLB_CFG.rdcfg('game'), r'Unofficial_Patch'),
+    'bak': os.path.join(GLB_CFG.rdcfg('game'), r'trans_bak'),
+    'work': GLB_CFG.rdcfg('work'),
     'codec': 'utf-8',
 }
 
