@@ -12,6 +12,13 @@ def report(*args):
     print(r)
     return r
 
+class c_min:
+    def __lt__(s, d):
+        return s != d
+    def __gt__(s, d):
+        return False
+VMIN = c_min()
+
 class c_paratranz_convert:
 
     def __init__(self, raw_name, paratranz_path, codec = 'utf-8'):
@@ -22,7 +29,7 @@ class c_paratranz_convert:
     @staticmethod
     def _ensure_path(path):
         dpath = os.path.dirname(path)
-        if not os.path.exists(dpath):
+        if dpath and not os.path.exists(dpath):
             os.makedirs(dpath)
 
     @staticmethod
@@ -45,14 +52,23 @@ class c_paratranz_convert:
         return item['original'], item['translation']
 
     @staticmethod
+    def _prtz_cmt(item):
+        return item['context'] if 'context' in item else None
+
+    @staticmethod
     def _trim_file_name(fn):
-        n, ext = os.path.splitext(fn)
-        r = []
-        for c in n:
-            if not c.isdigit():
-                r.append(c)
-        r.append(ext)
-        return ''.join(r)
+        kn, ext = os.path.splitext(fn)
+        rs = []
+        ns = kn.split('_')
+        for n in ns:
+            if len(n) == 1:
+                continue
+            r = []
+            for c in n:
+                if not c.isdigit():
+                    r.append(c)
+            rs.append(''.join(r))
+        return '_'.join(rs) + ext
 
     @staticmethod
     def _sort_file_name(dat, cb_key):
@@ -68,14 +84,14 @@ class c_paratranz_convert:
                         continue
                     if i > st:
                         if isdgt:
-                            yield int(n[st:i])
+                            yield f'{int(n[st:i]):08}'
                         else:
                             yield n[st:i]
                     isdgt = not isdgt
                     st = i
                 if st < len(n):
                     if isdgt:
-                        yield int(n[st:])
+                        yield f'{int(n[st:]):08}'
                     else:
                         yield n[st:]
             while True:
@@ -112,6 +128,10 @@ class c_paratranz_convert:
         if self.load_raw():
             self.save_prtz()
 
+    def prtz2raw(self):
+        if self.load_prtz():
+            self.save_raw()
+
     def load_raw(self):
         dat = self._load_json(self.raw_name)
         if not dat:
@@ -119,6 +139,9 @@ class c_paratranz_convert:
             return False
         self.dat = dat
         return True
+
+    def save_raw(self):
+        self._save_json(self.raw_name, self.dat)
 
     def save_prtz(self):
         r = self.save_prtz_dlg()
@@ -172,12 +195,17 @@ class c_paratranz_convert:
             (ttl_s, ttl_d), (s, d) = ((k, v) for k, v in txts.items())
             if ttl_s:
                 _n1, _n2 = os.path.splitext(fkey)
-                fkey = ''.join([_n1, '-' + ttl_s, _n2])
+                fkey = ''.join([_n1, '-' + ttl_s.lower(), _n2])
+            cmt = None
             if (ttl_s or ttl_d) and fkey in rs:
                 o_ttl_s, o_ttl_d = rt[fkey]
                 if o_ttl_s != ttl_s:
-                    raise ValueError(report(
-                        f'error: unmatch title for lip: {fpath}'))
+                    if o_ttl_s.lower() == ttl_s.lower():
+                        report(f'warning: unmatch title in case {o_ttl_s}/{ttl_s}: {fpath}')
+                        cmt = ttl_s
+                    else:
+                        raise ValueError(report(
+                            f'error: unmatch title for lip: {fpath}'))
                 if o_ttl_d and ttl_d:
                     if o_ttl_d != ttl_d:
                         raise ValueError(report(
@@ -188,7 +216,7 @@ class c_paratranz_convert:
                 rt[fkey] = [ttl_s, ttl_d]
                 rs[fkey] = []
             if s or d:
-                rs[fkey].append(self._prtz_item(fname, s, d))
+                rs[fkey].append(self._prtz_item(fname, s, d, cmt))
         for fkey, itms in rs.items():
             r = []
             ttl_s, ttl_d = rt[fkey]
@@ -196,7 +224,7 @@ class c_paratranz_convert:
                 r.append(self._prtz_item('title', ttl_s, ttl_d))
             self._sort_file_name(itms, self._prtz_key)
             r.extend(itms)
-            if rs:
+            if r:
                 self._save_json(
                     os.path.join(self.prtz_path, fkey + '.json'), r)
         return True
@@ -233,7 +261,8 @@ class c_paratranz_convert:
             'dlg': {},
             'lip': {},
         }
-        return self._load_prtz('')
+        self._load_prtz('')
+        return self.dat['dlg'] or self.dat['lip']
 
     def load_prtz_dlg(self, fn):
         dat = self._load_json(fn)
@@ -262,14 +291,21 @@ class c_paratranz_convert:
         for i, itm in enumerate(dat):
             key = self._prtz_key(itm)
             s, d = self._prtz_pair(itm)
+            cmt = self._prtz_cmt(itm)
             if key == 'title':
                 assert i == 0
                 ttl = (s, d)
                 continue
-            yield key, {
-                ttl[0]: ttl[1],
-                s: d
-            }
+            if cmt:
+                yield key, {
+                    cmt: ttl[1],
+                    s: d
+                }
+            else:
+                yield key, {
+                    ttl[0]: ttl[1],
+                    s: d
+                }
 
     def _cmp(self, v1, v2, path):
         if type(v1) != type(v2):
@@ -281,20 +317,55 @@ class c_paratranz_convert:
         elif v1 != v2:
             report(f'1!=2: {v1} / {v2} ({path})')
 
+    def _cmp_empty(self, v):
+        if isinstance(v, dict):
+            r = True
+            for k, i in v.items():
+                if k or not self._cmp_empty(i):
+                    r = False
+                    break
+            if not r:
+                return self._cmp_empty_lip(v)
+            return r
+        elif isinstance(v, (list, tuple)):
+            r = True
+            for i in v:
+                if not self._cmp_empty(i):
+                    r = False
+                    break
+            return r
+        else:
+            return not v
+
+    def _cmp_empty_lip(self, v):
+        if len(v) > 2:
+            return False
+        for i in v.values():
+            if not isinstance(i, str):
+                return False
+        if len(v) < 2:
+            return True
+        elif len(v) == 2:
+            if '' in v and v[''] == '':
+                return True
+        return False
+
     def _cmp_dict(self, d1, d2, path):
         for k in d1:
             dpath = ','.join([path, k])
-            if not k in d2:
-                report(f'1+: {k} ({dpath})')
-                continue
             v1 = d1[k]
+            if not k in d2:
+                if not self._cmp_empty(v1):
+                    report(f'1+: {k} ({dpath})')
+                continue
             v2 = d2[k]
             self._cmp(v1, v2, dpath)
         for k in d2:
             if k in d1:
                 continue
-            dpath = ','.join([path, k])
-            report(f'2+: {k} ({dpath})')
+            if not self._cmp_empty(d2[k]):
+                dpath = ','.join([path, k])
+                report(f'2+: {k} ({dpath})')
 
     def _cmp_list(self, s1, s2, path):
         if len(s1) != len(s2):
@@ -312,5 +383,24 @@ class c_paratranz_convert:
         dat_prtz = self.dat
         self._cmp(dat_raw, dat_prtz, 'root')
 
+def main(pc):
+    while True:
+        print(
+'''1, raw -> paratranz
+2, paratranz -> raw
+3, compare
+0, quit
+''')
+        v = input('Choose(1/2/3/0):')
+        if v == '1':
+            return pc.raw2prtz()
+        elif v == '2':
+            return pc.prtz2raw()
+        elif v == '3':
+            return pc.compare()
+        elif v == '0':
+            break
+        
 if __name__ == '__main__':
     pc = c_paratranz_convert(RAW_FILE, PRTZ_PATH)
+    main(pc)
