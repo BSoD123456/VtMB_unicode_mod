@@ -67,7 +67,8 @@ class c_paratranz_convert:
             for c in n:
                 if not c.isdigit():
                     r.append(c)
-            rs.append(''.join(r))
+            if r:
+                rs.append(''.join(r))
         return '_'.join(rs) + ext
 
     @staticmethod
