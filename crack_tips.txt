@@ -359,3 +359,51 @@ engine.201189E4 -> client.1CF04440
           1CF21FFA -> call client.1CF22060
             1CF2234B -> call client.1CF21FB0
 
+
+
+terminal print:
+
+vampire:07D60000
+vstdlib:00230000
+
+07F7C2E2 -> call vampire.7D73F98
+  07F77AE3 -> call dword ptr ds:[vstdlib.00233840:<&Q_vsnprintf>]
+    0023386B -> call vstdlib.234F6E
+      00234F95 -> call vstdlib.235A3E
+        00235A4F : mov bl,byte ptr ds:[edi] # read char from text buff
+        00235A6A # loop here
+        00235A7B # switch char case
+        00235C14 -> call vstdlib.23617F  (char, p?, p?)
+        00236146 # read char and inc again, from [edi] to bl, edi = [ebp+c], inc edi and [ebp+c]
+        00236151 # loop end
+        0023615E # ret
+  07F77AF5 -> call vampire.7D7249F
+  
+read txt from vsnprintf result(with some copy)
+
+engine:20000000
+
+07F77AF5 -> call vampire.7D7249F
+  07F78AB9 -> call engine.20109EA0 (txtbuff, ...) # copy txtbuff to hndl:[vampire.0846B22C], pbuff = [0846B22C]+1
+    200067F2 # loop here, read char from [edi]
+    20006828 -> call engine.200050E0 (char, ?, ?)
+    20006852 # loop end
+  07F78AC7 -> call # copy txtbuff to another buff
+  
+terminal command line print:
+
+command line buff can be found by search
+
+1CE370E1 # loop here, copy char from cmdline buff to buff2
+1CE370E9 # loop end
+
+1CE373E1 # read char from buff2
+
+1CE373F9 # loop here, for each char in buff2
+1CE373FF -> call client.1CE38060 (char,) # draw here? or send text here. when change this arg1, drawn text changed. encode to buff3 with 16bits char and |0x80
+1CE3740A # loop end
+
+1CE379C9 # read enc_char from buff3
+1CE37A04 # decode enc_char to char with &0x7f
+!! here read charset pix data !!
+1CFA31A8 # read some indexed data, maybe charset pix data, by eax(char-0x1b) * 8 + ebx(some idx) + 1CFA2EE8(charset base)
