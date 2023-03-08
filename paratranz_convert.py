@@ -19,8 +19,12 @@
 import os, os.path
 import json
 
+from glbcfg import GLB_CFG
+
 RAW_FILE = 'output.json'
 PRTZ_PATH = 'paratranz_out'
+
+WORK_PATH = GLB_CFG.rdcfg('work')
 
 def report(*args):
     r = ' '.join(args)
@@ -415,5 +419,8 @@ def main(pc):
             break
         
 if __name__ == '__main__':
-    pc = c_paratranz_convert(RAW_FILE, PRTZ_PATH)
+    pc = c_paratranz_convert(
+        os.path.join(WORK_PATH, RAW_FILE),
+        os.path.join(WORK_PATH, PRTZ_PATH),
+    )
     main(pc)
