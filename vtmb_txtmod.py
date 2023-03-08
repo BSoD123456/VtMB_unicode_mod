@@ -109,9 +109,9 @@ class c_dlg_parser(c_parser):
             li += 1
             lis = str(li)
             if lis in self.dat:
-                pair = self.dat[lis]
+                txts = self.dat[lis]
             else:
-                pair = {}
+                txts = {}
             for ri, m in enumerate(re.finditer(rpatt, line)):
                 s = m.group(1)
                 if not s:
@@ -120,12 +120,36 @@ class c_dlg_parser(c_parser):
                     if s != lis:
                         self.warning('parse', 'missing line {lis}/{s}')
                         li = int(s)
-                elif ri <= 2:
-                    if not s in pair:
-                        pair[s] = ''
+                elif ri == 1:
+                    if not ('male' in txts
+                        or 'common' in txts):
+                        txts['male'] = {s: ''}
                         dirty = True
-            if not lis in self.dat and pair:
-                self.dat[lis] = pair
+                elif ri == 2:
+                    if not ('female' in txts
+                        or 'common' in txts):
+                        txts['female'] = {s: ''}
+                        dirty = True
+                elif ri == 12:
+                    if not 'malkavian' in txts:
+                        txts['malkavian'] = {s: ''}
+                        dirty = True
+            if dirty:
+                if 'common' in txts:
+                    assert not 'male' in txts and not 'female' in txts
+                elif ('male' in txts
+                    and 'female' in txts
+                    and txts['male'] == txts['female']):
+                    txts['common'] = txts['male']
+                    del txts['male']
+                    del txts['female']
+                    if 'malkavian' in txts:
+                        # re-sort
+                        _t = txts['malkavian']
+                        del txts['malkavian']
+                        txts['malkavian'] = _t
+            if not lis in self.dat and txts:
+                self.dat[lis] = txts
         return dirty
 
     def modify(self):
@@ -143,16 +167,38 @@ class c_dlg_parser(c_parser):
             if not lis in self.dat:
                 rs.append(line)
                 continue
-            pair = self.dat[lis]
+            txts = self.dat[lis]
             cch = [0, False]
             def rplc(m):
                 ri = cch[0]
                 cch[0] += 1
                 s = m.group(2)
-                if not s or not 0 < ri <= 2 or not s in pair or not pair[s]:
+                tkey = None
+                if ri == 1:
+                    if 'male' in txts:
+                        tkey = 'male'
+                    elif 'common' in txts:
+                        tkey = 'common'
+                elif ri == 2:
+                    if 'female' in txts:
+                        tkey = 'female'
+                    elif 'common' in txts:
+                        tkey = 'common'
+                elif ri == 12:
+                    if 'malkavian' in txts:
+                        tkey = 'malkavian'
+                if not tkey:
+                    return m.group(0)
+                (stxt, dtxt), = ((k, v) for k, v in txts[tkey].items())
+                #dtxt = dtxt if dtxt else stxt
+                #if dtxt == s:
+                #    return m.group(0)
+                if stxt != s:
+                    self.warning('modify', 'unmatched source text:\n{s}\n{stxt}')
+                if not dtxt or dtxt == stxt:
                     return m.group(0)
                 cch[1] = True
-                return f'{{\t{pair[s]}\t}}'
+                return f'{{\t{dtxt}\t}}'
             line = re.sub(rpatt, rplc, line)
             rs.append(line)
             dirty |= cch[1]

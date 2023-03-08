@@ -1,6 +1,21 @@
 #! python3
 # coding: utf-8
 
+# VtMB Text files modifier
+# Copyright (C) 2023 Tring
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import os, os.path
 import json
 
@@ -158,15 +173,14 @@ class c_paratranz_convert:
         for fpath, txts in dat.items():
             rs = []
             for idx, txt in txts.items():
-                tlen = len(txt)
-                assert 1 <= tlen <= 2
-                for i, (s, d) in enumerate(txt.items()):
+                for k, t in txt.items():
+                    (s, d), = ((s, d) for s, d in t.items())
                     if not (s or d):
                         continue
-                    if tlen > 1:
-                        idxext = '#M' if i == 0 else '#F'
-                    else:
+                    if k == 'common':
                         idxext = ''
+                    else:
+                        idxext = '#' + k
                     rs.append(self._prtz_item(idx + idxext, s, d))
             rs.sort(key = lambda itm: int(self._prtz_key(itm).split('#')[0]))
             if rs:
@@ -276,12 +290,10 @@ class c_paratranz_convert:
             idxs = key.split('#')
             assert 1 <= len(idxs) <= 2
             idx = idxs[0]
-            if len(idxs) == 1 or idxs[1] == 'M':
-                assert not idx in rs
-                rs[idx] = {s: d}
-            elif idxs[1] == 'F':
-                assert idx in rs and len(rs[idx]) == 1
-                rs[idx][s] = d
+            ikey = idxs[1] if len(idxs) == 2 else 'common'
+            if not idx in rs:
+                rs[idx] = {}
+            rs[idx][ikey] = {s: d}
         return rs
 
     def load_prtz_lip(self, fn):
