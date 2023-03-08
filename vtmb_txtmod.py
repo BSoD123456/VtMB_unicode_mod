@@ -120,6 +120,7 @@ class c_dlg_parser(c_parser):
                     if s != lis:
                         self.warning('parse', f'missing line {lis}/{s}')
                         li = int(s)
+                        lis = str(li)
                 elif ri == 1:
                     if not ('male' in txts
                         or 'common' in txts):
