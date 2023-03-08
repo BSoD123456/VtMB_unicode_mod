@@ -83,7 +83,7 @@ class c_parser:
         try:
             self.txt = raw.decode(self.s_codec)
         except:
-            raise ValueError(report('no valid codec for {path}'))
+            raise ValueError(report(f'no valid codec for {path}'))
 
     def save(self, path):
         if not self.dirty:
@@ -118,7 +118,7 @@ class c_dlg_parser(c_parser):
                     continue
                 if ri == 0:
                     if s != lis:
-                        self.warning('parse', 'missing line {lis}/{s}')
+                        self.warning('parse', f'missing line {lis}/{s}')
                         li = int(s)
                 elif ri == 1:
                     if not ('male' in txts
@@ -160,7 +160,7 @@ class c_dlg_parser(c_parser):
         for line in self.txt.splitlines():
             m = re.search(rpatt_idx, line)
             if not m:
-                self.warning('modify', 'invalid line index:\n{line}')
+                self.warning('modify', f'invalid line index:\n{line}')
                 rs.append(line)
                 continue
             lis = m.group(1)
@@ -194,7 +194,7 @@ class c_dlg_parser(c_parser):
                 #if dtxt == s:
                 #    return m.group(0)
                 if stxt != s:
-                    self.warning('modify', 'unmatched source text:\n{s}\n{stxt}')
+                    self.warning('modify', f'unmatched source text:\n{s}\n{stxt}')
                 if not dtxt or dtxt == stxt:
                     return m.group(0)
                 cch[1] = True
@@ -527,7 +527,7 @@ class c_txt_mod:
         for edat in self.dat.values():
             for fpath, fdat in edat.items():
                 if not '__parser__' in fdat:
-                    report('warning: modify before parse: {fpath}')
+                    report(f'warning: modify before parse: {fpath}')
                     continue
                 psr = fdat['__parser__']
                 psr.modify()
