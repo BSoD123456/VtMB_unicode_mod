@@ -121,6 +121,10 @@ class c_dlg_parser(c_parser):
                         self.warning('parse', f'missing line {lis}/{s}')
                         li = int(s)
                         lis = str(li)
+                        if lis in self.dat:
+                            txts = self.dat[lis]
+                        else:
+                            txts = {}
                 elif ri == 1:
                     if not ('male' in txts
                         or 'common' in txts):
@@ -159,6 +163,8 @@ class c_dlg_parser(c_parser):
         rs = []
         dirty = False
         for line in self.txt.splitlines():
+            if not line:
+                continue
             m = re.search(rpatt_idx, line)
             if not m:
                 self.warning('modify', f'invalid line index:\n{line}')
@@ -532,6 +538,8 @@ class c_txt_mod:
                     continue
                 psr = fdat['__parser__']
                 psr.modify()
+                if psr.is_warning:
+                    report(f'above warning at {fpath}')
                 if not psr.dirty:
                     continue
                 report(f'modify {fpath}')
@@ -543,6 +551,8 @@ class c_txt_mod:
                     shutil.copy2(afpath, bfpath)
                 psr.save(afpath)
                 psr.dirty = False
+                if psr.is_warning:
+                    report(f'above warning at {fpath}')
 
 MOD_TXTS = {
     'dlg': {
