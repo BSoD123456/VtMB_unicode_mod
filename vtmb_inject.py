@@ -1003,6 +1003,41 @@ class c_pe_file(c_mark):
         self.mark_opt_win.W32(self.size_img, 0x1c)
         self.offs_tail += elen
 
+    def _insert_sect(self, src_sect_info, cfg):
+        mkh = src_sect_info['mark_h'].sub(0, 0x28)
+        sect_info = {
+            'mark_h': mkh,
+            'idx': src_sect_info['idx'],
+            'name': cfg['name'],
+            'size_v': 0,
+            'addr': src_sect_info['addr'],
+            'size': 0,
+            'offs': src_sect_info['offs'],
+        }
+        mkh.WSTR((sect_info['name'] + b'\0'*8)[:8])
+        mkh.W32(sect_info['size_v'], 0x8)
+        mkh.W32(sect_info['addr'], 0xc)
+        mkh.W32(sect_info['size'], 0x10)
+        mkh.W32(sect_info['offs'], 0x14)
+        flg = cfg['flag']
+        sect_info['char'] = {
+            'code': 0x20 if 'code' in flg and flg['code'] else 0,
+            'idat': 0x40 if 'idat' in flg and flg['idat'] else 0,
+            'udat': 0x80 if 'udat' in flg and flg['udat'] else 0,
+            'ncch': 0x4000000 if 'ncch' in flg and flg['ncch'] else 0,
+            'npag': 0x8000000 if 'npag' in flg and flg['npag'] else 0,
+            'shar': 0x10000000 if 'shar' in flg and flg['shar'] else 0,
+            'exec': 0x20000000 if 'exec' in flg and flg['exec'] else 0,
+            'read': 0x40000000 if 'read' in flg and flg['read'] else 0,
+            'writ': 0x80000000 if 'writ' in flg and flg['writ'] else 0,
+        }
+        ch = 0
+        for v in sect_info['char'].values():
+            ch |= v
+        mkh.W32(ch, 0x24)
+        sect_info['mark'] = self.sub(sect_info['offs'], sect_info['size'])
+        # TODO: insert to tab_sect and shift others
+
     def _access(self, a_st, a_ed):
         sect_info, offs_sect = self._get_sect_by_addr(a_st, None, True)
         s_st = sect_info['addr']
