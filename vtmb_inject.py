@@ -538,13 +538,13 @@ class c_mark:
     def raw(self):
         if self.parent:
             return self.parent.raw
-        return self._mod if self._mod else self._raw
+        return self._mod if not self._mod is None else self._raw
 
     @property
     def mod(self):
         if self.parent:
             return self.parent.mod
-        if not self._mod:
+        if self._mod is None:
             self._mod = bytearray(self._raw)
         return self._mod
 
@@ -554,6 +554,10 @@ class c_mark:
         if self.parent:
             po += self.parent.par_offset
         return po
+
+    @property
+    def real_offset(self):
+        return self.par_offset + self.offset
 
     def shift(self, offs):
         self._par_offset += offs
@@ -597,8 +601,22 @@ class c_mark:
             self.extendto(pos + cnt)
         return self.raw[st: ed]
 
+    def WBYTES(self, pos, dst):
+        st = self.offset + pos
+        cnt = len(dst)
+        ed = st + cnt
+        self.extendto(pos + cnt)
+        self.mod[st: ed] = dst
+        return cnt
+
     def STR(self, pos, cnt, codec = 'utf8'):
         return self.BYTES(pos, cnt).split(b'\0')[0].decode(codec)
+
+    def WSTR(self, pos, dst, codec = 'utf8'):
+        b = dst.encode(codec)
+        if b[-1] != 0:
+            b += b'\0'
+        return self.WBYTES(pos, b)
 
     def BYTESN(self, pos):
         st = self.offset + pos
@@ -614,14 +632,14 @@ class c_mark:
         b, n = self.BYTESN(pos)
         return b.decode(codec), n
 
-    def sub(self, pos, length = 0):
-        if length > 0:
-            s = c_mark(None, 0)
-            s._mod = bytearray(self.BYTES(pos, length))
-            s._par_offset = self.par_offset + pos
-        else:
+    def sub(self, pos, length = None):
+        if length is None:
             s = c_mark(None, self.offset + pos)
             s.parent = self
+        else:
+            s = c_mark(None, 0)
+            s._mod = bytearray(self.BYTES(pos, length))
+            s._par_offset = self.real_offset + pos
         return s
 
 class c_pe_file(c_mark):
@@ -1303,6 +1321,8 @@ class c_pe_patcher:
             except:
                 report(f'error: {name} repack failed')
                 return False
+        with open(fn_dst, 'rb') as fd:
+            report(f'{name} patched md5: {hash_md5(fd.read())}')
         if overwrite:
             shutil.copy2(fn_dst, fn)
         return True
