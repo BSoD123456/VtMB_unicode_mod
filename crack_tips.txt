@@ -394,6 +394,8 @@ terminal command line print:
 
 command line buff can be found by search
 
+client:1CD70000
+
 1CE370E1 # loop here, copy char from cmdline buff to buff2
 1CE370E9 # loop end
 
@@ -406,4 +408,4 @@ command line buff can be found by search
 1CE379C9 # read enc_char from buff3
 1CE37A04 # decode enc_char to char with &0x7f
 !! here read charset pix data !!
-1CFA31A8 # read some indexed data, maybe charset pix data, by eax(char-0x1b) * 8 + ebx(some idx) + 1CFA2EE8(charset base)
+1CE37A36 # read some indexed data, maybe charset pix data, by eax(char-0x1b) * 8 + ebx(some idx) + 1CFA2EE8(charset base)

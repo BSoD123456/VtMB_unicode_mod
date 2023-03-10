@@ -51,6 +51,33 @@ def insert_sect(sect_len, cfg):
         return f'new sect {cfg["name"]}: 0x{s_offs:08X}/0x{s_offs+s_size:08X}'
     return _insert
 
+def test_charset():
+    rmem = []
+    def _enc(v):
+        c = v
+        rs = []
+        while c > 0:
+            rs.append(c % 3)
+            c = c // 3
+        return rs
+    for v in range(256):
+        rmem.append(0)
+        rs = _enc(v)
+        lr = len(rs)
+        for i in range(6):
+            if i < lr:
+                d = rs[i]
+            else:
+                d = 0
+            if d == 1:
+                rmem.append(0x2a)
+            elif d == 2:
+                rmem.append(0x7e)
+            else:
+                rmem.append(0)
+        rmem.append(0)
+    return bytes(rmem)
+
 class c_label_ctx:
     def __init__(self):
         self.tab = {}
@@ -351,9 +378,13 @@ MOD_DLLS = {
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
-            (data_ext, insert_sect(0x10, {
+            (data_ext, insert_sect(0x1000, {
                 'name': '.xdata', 'like': '.rdata',
             })), # insert new idata sect before .reloc
+            (data_ext, test_charset()),
+            (0xc7a36, [
+                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
+            ]),
             # a func which split text to multi lines, here find breakable position
             (0x55075, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
@@ -1428,7 +1459,10 @@ class c_pe_patcher:
     def _check_reloc(self, dec, ins):
         if not (ins.memory_displ_size
             and ins.memory_displacement
-            and ins.memory_base == 0):
+            and (ins.memory_base == 0 or (
+                ins.memory_displ_size == 4
+                and ins.memory_segment == R.DS
+            ))):
             return None
         offs_info = dec.get_constant_offsets(ins)
         assert (offs_info.has_displacement
