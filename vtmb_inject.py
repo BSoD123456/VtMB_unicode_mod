@@ -45,6 +45,12 @@ def shift_mem(src_len, shft_len):
         return f'offs:0x{s_offs:08X}/0x{s_offs+src_len-1:08X} -> offs:0x{d_offs:08X}/0x{d_offs+src_len-1:08X} shift(n:0x{shft_len:04X})'
     return _shift
 
+def insert_sect(sect_len, cfg):
+    def _insert(addr, pe):
+        d_offs, s_offs, s_size = pe.insert(addr, sect_len, cfg)
+        return f'new sect {cfg["name"]}: 0x{s_offs:08X}/0x{s_offs+s_size:08X}'
+    return _insert
+
 class c_label_ctx:
     def __init__(self):
         self.tab = {}
@@ -345,6 +351,9 @@ MOD_DLLS = {
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
+            (data_ext, insert_sect(0x10, {
+                'name': '.xdata', 'like': '.rdata',
+            })), # insert new idata sect before .reloc
             # a func which split text to multi lines, here find breakable position
             (0x55075, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
@@ -601,7 +610,7 @@ class c_mark:
             self.extendto(pos + cnt)
         return self.raw[st: ed]
 
-    def WBYTES(self, pos, dst):
+    def WBYTES(self, dst, pos):
         st = self.offset + pos
         cnt = len(dst)
         ed = st + cnt
@@ -612,11 +621,11 @@ class c_mark:
     def STR(self, pos, cnt, codec = 'utf8'):
         return self.BYTES(pos, cnt).split(b'\0')[0].decode(codec)
 
-    def WSTR(self, pos, dst, codec = 'utf8'):
+    def WSTR(self, dst, pos, codec = 'utf8'):
         b = dst.encode(codec)
         if b[-1] != 0:
             b += b'\0'
-        return self.WBYTES(pos, b)
+        return self.WBYTES(b, pos)
 
     def BYTESN(self, pos):
         st = self.offset + pos
@@ -1005,21 +1014,22 @@ class c_pe_file(c_mark):
 
     def _insert_sect(self, src_sect_info, cfg):
         mkh = src_sect_info['mark_h'].sub(0, 0x28)
+        sidx = src_sect_info['idx']
         sect_info = {
             'mark_h': mkh,
-            'idx': src_sect_info['idx'],
+            'idx': sidx,
             'name': cfg['name'],
             'size_v': 0,
             'addr': src_sect_info['addr'],
             'size': 0,
             'offs': src_sect_info['offs'],
         }
-        mkh.WSTR((sect_info['name'] + b'\0'*8)[:8])
+        mkh.WSTR((sect_info['name'] + '\0'*8)[:8], 0x0)
         mkh.W32(sect_info['size_v'], 0x8)
         mkh.W32(sect_info['addr'], 0xc)
         mkh.W32(sect_info['size'], 0x10)
         mkh.W32(sect_info['offs'], 0x14)
-        flg = cfg['flag']
+        flg = cfg['char']
         sect_info['char'] = {
             'code': 0x20 if 'code' in flg and flg['code'] else 0,
             'idat': 0x40 if 'idat' in flg and flg['idat'] else 0,
@@ -1036,7 +1046,20 @@ class c_pe_file(c_mark):
             ch |= v
         mkh.W32(ch, 0x24)
         sect_info['mark'] = self.sub(sect_info['offs'], sect_info['size'])
-        # TODO: insert to tab_sect and shift others
+        tab_sect = self.tab_sect
+        for idx in range(sidx, len(tab_sect)):
+            shft_sect_info = tab_sect[idx]
+            shft_sect_info['idx'] += 1
+        tab_sect.insert(sidx, sect_info)
+        self.num_sect += 1
+        self.mark_coff.W16(self.num_sect, 0x6)
+
+    def insert_sect(self, idx, dlen, cfg):
+        if idx >= len(self.tab_sect):
+            return
+        src_sect_info = self.tab_sect[idx]
+        self._insert_sect(src_sect_info, cfg)
+        self.ext_sect(idx, dlen)
 
     def _access(self, a_st, a_ed):
         sect_info, offs_sect = self._get_sect_by_addr(a_st, None, True)
@@ -1077,6 +1100,28 @@ class c_pe_file(c_mark):
         r_st, r_ed = self._shift(mk, offs_sect, s_len, shft_len)
         self._shift_datdir_tab(s_st, s_ed, shft_len)
         return r_st, r_ed
+
+    def _cfg_sect(self, cfg):
+        ncfg = {}
+        if 'like' in cfg:
+            lsname = cfg['like']
+            for sect_info in self.tab_sect:
+                if sect_info['name'] == lsname:
+                    ncfg['char'] = sect_info['char'].copy()
+                    break
+        for k, v in cfg.items():
+            if k == 'char' and k in ncfg:
+                ncfg[k].update(v)
+            else:
+                ncfg[k] = v
+        return ncfg
+
+    def insert(self, s_st, s_len, cfg):
+        src_sect_info, offs_sect = self._get_sect_by_addr(s_st, None, True)
+        sidx = src_sect_info['idx']
+        self.insert_sect(sidx, offs_sect + s_len, self._cfg_sect(cfg))
+        sect_info = self.tab_sect[sidx]
+        return sect_info['offs'] + offs_sect, sect_info['offs'], sect_info['size']
 
     def _page_aligned_base(self, addr):
         page_len = 0x1000
@@ -1232,12 +1277,30 @@ class c_pe_file(c_mark):
                     mk.W32(blk_lst_page_addr, idx)
                     mk.W32(blk_lst_rm_size + blk_entry_len, idx + 0x4)
 
+    def _repack_header(self):
+        tab_sect = self.tab_sect
+        size_hdr = self.size_hdr
+        if not tab_sect:
+            yield self.BYTES(0, size_hdr)
+            return size_hdr
+        offs_1st_sect = tab_sect[0]['mark_h'].real_offset
+        yield self.BYTES(0, offs_1st_sect)
+        size_all = offs_1st_sect
+        for sect_info in tab_sect:
+            yield sect_info['mark_h'].BYTES(0, 0x28)
+            size_all += 0x28
+            if size_all > self.size_hdr:
+                raise ValueError(report(
+                    f'sect header overflow: {sect_info["name"]}'))
+        if size_all < self.size_hdr:
+            yield self.BYTES(size_all, size_hdr - size_all)
+        return size_hdr
+
     def repack(self):
-        size_all = self.size_hdr
         size_code = 0
         size_idat = 0
         size_udat = 0
-        yield self.BYTES(0, size_all)
+        size_all = yield from self._repack_header()
         nxt_offs = size_all
         nxt_addr = size_all
         for sect_info in self.tab_sect:
