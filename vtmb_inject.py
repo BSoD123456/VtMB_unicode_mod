@@ -60,21 +60,34 @@ def test_charset():
             rs.append(c % 3)
             c = c // 3
         return rs
-    for v in range(256):
+    for v in range(0xffff):
         rmem.append(0)
-        rs = _enc(v)
-        lr = len(rs)
+        v1 = (v & 0xff)
+        v2 = (v >> 8)
+        rs1 = _enc(v1)
+        rs2 = _enc(v2)
+        lr1 = len(rs1)
+        lr2 = len(rs2)
         for i in range(6):
-            if i < lr:
-                d = rs[i]
+            if i < lr1:
+                d1 = rs1[i]
             else:
-                d = 0
-            if d == 1:
-                rmem.append(0x2a)
-            elif d == 2:
-                rmem.append(0x7e)
+                d1 = 0
+            if i < lr2:
+                d2 = rs2[i]
             else:
-                rmem.append(0)
+                d2 = 0
+            if d1 == 1:
+                r = 0xa
+            elif d1 == 2:
+                r = 0xe
+            else:
+                r = 0
+            if d2 == 1:
+                r |= 0x20
+            elif d2 == 2:
+                r |= 0x70
+            rmem.append(r)
         rmem.append(0)
     return bytes(rmem)
 
@@ -378,7 +391,7 @@ MOD_DLLS = {
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
-            (data_ext, insert_sect(0x1000, {
+            (data_ext, insert_sect(0x10, {
                 'name': '.xdata', 'like': '.rdata',
             })), # insert new idata sect before .reloc
             (data_ext, test_charset()),
