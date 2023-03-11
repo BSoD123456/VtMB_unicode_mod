@@ -393,9 +393,13 @@ MOD_DLLS = {
         'md5':  '1c80bb0ae0486c9dfb6ecc35c604b050',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
+            # insert new sect before .reloc
+            (code_ext, insert_sect(data_ext - code_ext, {
+                'name': '.hook', 'like': '.text',
+            })),
             (data_ext, insert_sect(0x10, {
-                'name': '.xdata', 'like': '.rdata',
-            })), # insert new idata sect before .reloc
+                'name': '.chrst', 'like': '.rdata',
+            })),
             (data_ext, vtmb_fbm_charset()),
             (0xc7a36, [
                 I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
@@ -466,6 +470,11 @@ MOD_DLLS = {
             # make a line start position table in draw_text_info
             (0x1aea1d, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
+                I.create(C.NOPD),
+            ]),
+            # terminal char encode.
+            (0xc8060, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
                 I.create(C.NOPD),
             ]),
             # hooks find breakable char
@@ -543,7 +552,93 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JMP_REL32_32, 0x1aea23),
             ])),
-        ])(0x10000000, 0x1e3000, 0x683000, [-0x400, -0x300], []),
+            # hooks terminal char encode
+            (code_ext + hooks[2], with_label_ctx(lambda lbc: [
+                I.create_reg(C.PUSH_R32, R.EBX),
+                I.create_reg_mem(C.MOV_R32_RM32, R.EBX, M(R.ESP, displ=0x8)),
+                I.create_reg(C.PUSH_R32, R.ESI),
+                I.create_reg_reg(C.MOV_R32_RM32, R.ESI, R.ECX),
+                I.create_reg(C.PUSH_R32, R.EDX),
+                # start
+                # row_idx
+                I.create_reg_mem(C.MOV_R32_RM32, R.EDX, M(R.ESI, displ=0xe7c)),
+                # row_base
+                I.create_reg_mem(C.LEA_R32_M, R.EDX, M(R.EDX, index=R.EDX, scale=0x8)), # edx=edx*9
+                I.create_reg_mem(C.LEA_R32_M, R.EDX, M(R.ESI, index=R.EDX, scale=0x8, displ=0x7b4)),
+                # col_idx
+                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESI, displ=0xe78)),
+                # read buff cur
+                I.create_reg_mem(C.MOVZX_R32_RM16, R.EAX, M(R.EDX, index=R.ECX, scale=0x2)),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.AH, 0x80),
+                I.create_branch(C.JB_REL32_32, lbc.lb('new_char')),
+                # w_char low
+                I.create_reg_u32(C.AND_RM8_IMM8, R.AH, 0X7f),
+                I.create_reg_reg(C.MOV_R8_RM8, R.AL, R.BL),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('write_buff')),
+                # new char
+                lbc.add('new_char',
+                    I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0x7f),
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('back')),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xd),
+                I.create_branch(C.JE_REL32_32, lbc.lb('back')),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xa),
+                I.create_branch(C.JE_REL32_32, lbc.lb('back')),
+                # check line end
+                I.create_reg_mem(C.CMP_R32_RM32, R.ECX, M(R.ESI, displ=0x7ac)),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('rec_char')),
+                # line break
+                I.create_reg(C.PUSH_R32, R.EAX),
+                I.create_reg(C.PUSH_R32, R.EBX),
+                I.create_reg(C.PUSH_R32, R.ECX),
+                I.create_reg(C.PUSH_R32, R.EDX),
+                I.create_reg_reg(C.MOV_R32_RM32, R.ECX, R.ESI),
+                I.create_u32(C.PUSHD_IMM32, 0xa),
+                I.create_branch(C.CALL_REL32_32, 0xc8060),
+                I.create_reg(C.POP_R32, R.EDX),
+                I.create_reg(C.POP_R32, R.ECX),
+                I.create_reg(C.POP_R32, R.EBX),
+                I.create_reg(C.POP_R32, R.EAX),
+                # record new char
+                lbc.add('rec_char',
+                    I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0x80),
+                ),
+                I.create_branch(C.JB_REL32_32, lbc.lb('uni_char')),
+                # w_char high
+                I.create_reg_reg(C.MOV_R8_RM8, R.AH, R.BL),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('write_buff')),
+                # uni_char
+                lbc.add('uni_char',
+                    I.create_reg_reg(C.MOVZX_R16_RM8, R.AX, R.BL),
+                ),
+                # write to buff
+                lbc.add('write_buff',
+                    I.create_reg(C.PUSH_R32, R.EAX),
+                ),
+                I.create_reg_mem(C.XOR_R16_RM16, R.AX, M(R.EDX, index=R.ECX, scale=0x2)),
+                I.create_reg_u32(C.TEST_AX_IMM16, R.AX, 0x7fff),
+                I.create_reg(C.POP_R32, R.EAX),
+                I.create_mem_reg(C.MOV_RM16_R16, M(R.EDX, index=R.ECX, scale=0x2), R.AX),
+                I.create_mem(C.INC_RM32, M(R.ESI, displ=0xe78)),
+                I.create_branch(C.JE_REL32_32, lbc.lb('done')),
+                # set dirty
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(R.ESI, displ=0x7a8), 1),
+                # encode done
+                lbc.add('done',
+                    I.create_reg(C.POP_R32, R.EDX),
+                ),
+                I.create_reg_reg(C.MOV_R32_RM32, R.ECX, R.ESI),
+                I.create_reg(C.POP_R32, R.ESI),
+                I.create_reg(C.POP_R32, R.EBX),
+                I.create_u32(C.RETND_IMM16, 0x4),
+                # back to orig encode
+                lbc.add('back',
+                    I.create_reg(C.POP_R32, R.EDX),
+                ),
+                I.create_reg_reg(C.MOV_R32_RM32, R.ECX, R.ESI),
+                I.create_branch(C.JMP_REL32_32, 0xc8066),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200], []),
     },
 }
 
