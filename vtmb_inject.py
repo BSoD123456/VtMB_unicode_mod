@@ -473,9 +473,16 @@ MOD_DLLS = {
                 I.create(C.NOPD),
             ]),
             # terminal buff clean
-            (0xc7f7c, [
-                I.create_reg_u32(C.MOV_R8_IMM8, R.DL, 0x20),
+##            (0xc7f7c, [
+##                I.create_reg_u32(C.MOV_R8_IMM8, R.DL, 0xa0),
+##                I.create_reg_reg(C.XOR_R8_RM8, R.DH, R.DH),
+##            ]),
+            (0xc7f7e, [
                 I.create_reg_reg(C.XOR_R8_RM8, R.DH, R.DH),
+            ]),
+            # terminal newline fill 0x20/0xa0
+            (0xc8287, [
+                I.create_reg_reg(C.XOR_R8_RM8, R.BH, R.BH),
             ]),
             # terminal char encode
             (0xc8060, [
@@ -611,15 +618,20 @@ MOD_DLLS = {
                 I.create_branch(C.JB_REL32_32, lbc.lb('uni_char')),
                 # w_char high
                 I.create_reg_reg(C.MOV_R8_RM8, R.AH, R.BL),
-                I.create_branch(C.JMP_REL32_32, lbc.lb('write_buff')),
+                I.create_mem_reg(C.MOV_RM16_R16, M(R.EDX, index=R.ECX, scale=0x2), R.AX),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('done')),
                 # uni_char
                 lbc.add('uni_char',
                     I.create_reg_reg(C.MOVZX_R16_RM8, R.AX, R.BL),
                 ),
+                I.create_reg_u32(C.OR_RM8_IMM8, R.AL, 0x80),
                 # write to buff
                 lbc.add('write_buff',
-                    I.create_reg(C.PUSH_R32, R.EAX),
+                    I.create_reg_mem(C.MOV_R8_RM8, R.BL, M(R.ESI, displ=0xe74)),
                 ),
+                I.create_reg_u32(C.OR_RM8_IMM8, R.BL, 0x7f),
+                I.create_reg_reg(C.AND_R8_RM8, R.AL, R.BL),
+                I.create_reg(C.PUSH_R32, R.EAX),
                 I.create_reg_mem(C.XOR_R16_RM16, R.AX, M(R.EDX, index=R.ECX, scale=0x2)),
                 I.create_reg_u32(C.TEST_AX_IMM16, R.AX, 0x7fff),
                 I.create_reg(C.POP_R32, R.EAX),
