@@ -1,7 +1,7 @@
 #! python3
 # coding: utf-8
 
-# VtMB Text files modifier
+# Paratranz files converter
 # Copyright (C) 2023 Tring
 #
 # This program is free software: you can redistribute it and/or modify it under

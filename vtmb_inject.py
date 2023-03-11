@@ -34,6 +34,8 @@ pip install iced-x86
 
 from glbcfg import GLB_CFG
 
+from vtmb_font_bitmap import vtmb_fbm_charset
+
 PP_CFG = {
     'root': GLB_CFG.rdcfg('game'),
     'bitness': 32,
@@ -394,7 +396,7 @@ MOD_DLLS = {
             (data_ext, insert_sect(0x10, {
                 'name': '.xdata', 'like': '.rdata',
             })), # insert new idata sect before .reloc
-            (data_ext, test_charset()),
+            (data_ext, vtmb_fbm_charset()),
             (0xc7a36, [
                 I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
             ]),
