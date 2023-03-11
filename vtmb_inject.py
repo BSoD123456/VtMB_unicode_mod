@@ -1571,6 +1571,7 @@ class c_pe_patcher:
             and ins.memory_displacement
             and (ins.memory_base == 0 or (
                 ins.memory_displ_size == 4
+                and 0x10000000 < ins.memory_displacement < 0x80000000
                 and ins.memory_segment == R.DS
             ))):
             return None
