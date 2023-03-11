@@ -489,6 +489,10 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
                 I.create(C.NOPD),
             ]),
+            # terminal charset read
+            (0xc79d5, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[3]),
+            ]),
             # hooks find breakable char
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),
@@ -655,7 +659,12 @@ MOD_DLLS = {
                 I.create_reg_reg(C.MOV_R32_RM32, R.ECX, R.ESI),
                 I.create_branch(C.JMP_REL32_32, 0xc8066),
             ])),
-        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200], []),
+            # hooks terminal charset read
+            (code_ext + hooks[3], with_label_ctx(lambda lbc: [
+                I.create_reg_u32(C.OR_RM16_IMM16, R.AX, 0x80),
+                I.create_branch(C.JMP_REL32_32, 0xc7a11),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300], []),
     },
 }
 

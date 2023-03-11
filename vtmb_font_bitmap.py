@@ -62,6 +62,10 @@ class c_font_bitmap:
                 r[i//8] |= (1<<(7-(i%8)))
         return r
 
+    def charset_empty(self, num):
+        for i in range(num):
+            yield self.char_blank
+
     def charset_ascii(self):
         for i in range(0x80):
             try:
@@ -70,7 +74,7 @@ class c_font_bitmap:
                 yield self.char_blank
 
     def charset_ansi(self, codec):
-        for h in range(0x80, 0x100):
+        for h in range(0x81, 0x100):
             for l in range(0x100):
                 c = bytes.fromhex('{:04X}'.format((h<<8)+l))
                 try:
@@ -90,6 +94,8 @@ def vtmb_fbm_charset():
         raise RuntimeError(
             f'font {font_path} is not valid. please download it by yourself.')
     rs = []
+    for r in fbm.charset_empty(0x80):
+        rs.extend(r)
     for r in fbm.charset_ascii():
         rs.extend(r)
     for r in fbm.charset_ansi(FONT_CODEC):
