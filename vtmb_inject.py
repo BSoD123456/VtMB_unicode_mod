@@ -472,7 +472,12 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
                 I.create(C.NOPD),
             ]),
-            # terminal char encode.
+            # terminal buff clean
+            (0xc7f7c, [
+                I.create_reg_u32(C.MOV_R8_IMM8, R.DL, 0x20),
+                I.create_reg_reg(C.XOR_R8_RM8, R.DH, R.DH),
+            ]),
+            # terminal char encode
             (0xc8060, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[2]),
                 I.create(C.NOPD),

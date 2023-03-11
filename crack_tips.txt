@@ -409,3 +409,10 @@ client:1CD70000
 1CE37A04 # decode enc_char to char with &0x7f
 !! here read charset pix data !!
 1CE37A36 # read some indexed data, maybe charset pix data, by eax(char-0x1b) * 8 + ebx(some idx) + 1CFA2EE8(charset base)
+
+engine:20000000
+client:1CDB0000
+
+2002DA1F -> call client.1CE783A0
+  1CE7842A -> call client.1CE77F50 # set all terminal buff to 0xa0a0
+    1CE77F88 # set all buff to 0xa0a0
