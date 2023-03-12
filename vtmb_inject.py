@@ -577,7 +577,9 @@ MOD_DLLS = {
                 I.create_reg(C.PUSH_R32, R.EDX),
                 # start
                 # row_idx
-                I.create_reg_mem(C.MOV_R32_RM32, R.EDX, M(R.ESI, displ=0xe7c)),
+                lbc.add('start',
+                    I.create_reg_mem(C.MOV_R32_RM32, R.EDX, M(R.ESI, displ=0xe7c)),
+                ),
                 # row_base
                 I.create_reg_mem(C.LEA_R32_M, R.EDX, M(R.EDX, index=R.EDX, scale=0x8)), # edx=edx*9
                 I.create_reg_mem(C.LEA_R32_M, R.EDX, M(R.ESI, index=R.EDX, scale=0x8, displ=0x7b4)),
@@ -597,24 +599,19 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JE_REL32_32, lbc.lb('back')),
                 I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xd),
-                I.create_branch(C.JE_REL32_32, lbc.lb('back')),
+                I.create_branch(C.JE_REL32_32, lbc.lb('done')), # ignore CR, then CRLF = LF. BUT in orig, CRLF = LF * 2 !!
                 I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xa),
                 I.create_branch(C.JE_REL32_32, lbc.lb('back')),
                 # check line end
                 I.create_reg_mem(C.CMP_R32_RM32, R.ECX, M(R.ESI, displ=0x7ac)),
-                I.create_branch(C.JMP_REL32_32, lbc.lb('rec_char')),
+                I.create_branch(C.JL_REL32_32, lbc.lb('rec_char')),
                 # line break
-                I.create_reg(C.PUSH_R32, R.EAX),
                 I.create_reg(C.PUSH_R32, R.EBX),
-                I.create_reg(C.PUSH_R32, R.ECX),
-                I.create_reg(C.PUSH_R32, R.EDX),
                 I.create_reg_reg(C.MOV_R32_RM32, R.ECX, R.ESI),
                 I.create_u32(C.PUSHD_IMM32, 0xa),
                 I.create_branch(C.CALL_REL32_32, 0xc8060),
-                I.create_reg(C.POP_R32, R.EDX),
-                I.create_reg(C.POP_R32, R.ECX),
                 I.create_reg(C.POP_R32, R.EBX),
-                I.create_reg(C.POP_R32, R.EAX),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('start')),
                 # record new char
                 lbc.add('rec_char',
                     I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0x80),
