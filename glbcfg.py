@@ -30,6 +30,9 @@ class c_global_config:
         for k in keys:
             if k in cfg:
                 return cfg[k]
+        if keys and not default is None:
+            cfg[keys[0]] = default
+            self.save()
         return default
 
 GLB_CFG = c_global_config('config.json', 'utf-8', {

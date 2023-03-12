@@ -78,6 +78,10 @@ class c_label_ctx:
 def with_label_ctx(func):
     return func(c_label_ctx())
 
+MOD_OPTION = {
+    'terminal_8bits': GLB_CFG.rdcfg('terminal_8bits', default=True),
+}
+
 MOD_DLLS = {
     'vguimatsurface': {
         'path': 'Bin',
@@ -375,9 +379,6 @@ MOD_DLLS = {
             (data_ext, vtmb_fbm_charset()),
             # replace old ascii charset from 0x1b to 0x7f
             (data_ext + (0x80+0x1b)*8, from_mem((0x232ee8, 0x233210))),
-            (0xc7a36, [
-                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
-            ]),
             # a func which split text to multi lines, here find breakable position
             (0x55075, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
@@ -467,6 +468,19 @@ MOD_DLLS = {
             (0xc79d5, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[3]),
             ]),
+            # terminal charset from .chrst
+            (0xc7a36, [
+                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
+            ]),
+            # terminal charset draw width
+##            (0xc7a3f, [
+##                I.create_reg_u32(C.MOV_R32_IMM32, R.EDX, 0x8),
+##            ]),
+            (0xc7a3d, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[4]),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+            ] if MOD_OPTION['terminal_8bits'] else None),
             # hooks find breakable char
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),
@@ -635,7 +649,24 @@ MOD_DLLS = {
                 I.create_reg_u32(C.OR_RM16_IMM16, R.AX, 0x80),
                 I.create_branch(C.JMP_REL32_32, 0xc7a11),
             ])),
-        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300], []),
+            # hooks terminal charset draw width
+            (code_ext + hooks[4], with_label_ctx(lambda lbc: [
+                #I.create_reg_u32(C.CMP_EAX_IMM32, R.EAX, 0x2020),
+                #I.create_branch(C.JE_REL32_32, lbc.lb('7b')),
+                I.create_reg_u32(C.CMP_EAX_IMM32, R.EAX, 0x100),
+                I.create_branch(C.JB_REL32_32, lbc.lb('7b')),
+                # 8bits
+                I.create_reg_reg(C.MOV_R32_RM32, R.EAX, R.EDX),
+                I.create_reg_u32(C.MOV_R32_IMM32, R.EDX, 0x8),
+                I.create_branch(C.JMP_REL32_32, 0xc7a44),
+                # 7bits
+                lbc.add('7b',
+                    I.create_reg_reg(C.MOV_R32_RM32, R.EAX, R.EDX),
+                ),
+                I.create_reg_u32(C.MOV_R32_IMM32, R.EDX, 0x7),
+                I.create_branch(C.JMP_REL32_32, 0xc7a44),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380], []),
     },
 }
 
@@ -1614,6 +1645,8 @@ class c_pe_patcher:
         bitness = self.cfg['bitness']
         asm_patch = []
         for ip, seg in patch:
+            if not seg:
+                continue
             asm_info = {}
             asm_patch.append((ip, asm_info))
             if callable(seg):
