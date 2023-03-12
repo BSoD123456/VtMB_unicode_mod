@@ -79,6 +79,7 @@ def with_label_ctx(func):
     return func(c_label_ctx())
 
 MOD_OPTION = {
+    'terminal_ignCR': GLB_CFG.rdcfg('terminal_ignCR', default=True),
     'terminal_8bits': GLB_CFG.rdcfg('terminal_8bits', default=True),
 }
 
@@ -587,7 +588,10 @@ MOD_DLLS = {
                 ),
                 I.create_branch(C.JE_REL32_32, lbc.lb('back')),
                 I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xd),
-                I.create_branch(C.JE_REL32_32, lbc.lb('done')), # ignore CR, then CRLF = LF. BUT in orig, CRLF = LF * 2 !!
+                # ignore CR, then CRLF = LF. BUT in orig, CRLF = LF * 2 !!
+                I.create_branch(C.JE_REL32_32, lbc.lb(
+                    'done' if MOD_OPTION['terminal_ignCR'] else 'back'
+                )),
                 I.create_reg_u32(C.CMP_RM8_IMM8, R.BL, 0xa),
                 I.create_branch(C.JE_REL32_32, lbc.lb('back')),
                 # check line end
