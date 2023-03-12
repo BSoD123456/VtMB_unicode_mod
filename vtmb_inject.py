@@ -53,45 +53,16 @@ def insert_sect(sect_len, cfg):
         return f'new sect {cfg["name"]}: 0x{s_offs:08X}/0x{s_offs+s_size:08X}'
     return _insert
 
-def test_charset():
-    rmem = []
-    def _enc(v):
-        c = v
+def from_mem(*mrngs):
+    def _copy(addr, pe):
         rs = []
-        while c > 0:
-            rs.append(c % 3)
-            c = c // 3
-        return rs
-    for v in range(0xffff):
-        rmem.append(0)
-        v1 = (v & 0xff)
-        v2 = (v >> 8)
-        rs1 = _enc(v1)
-        rs2 = _enc(v2)
-        lr1 = len(rs1)
-        lr2 = len(rs2)
-        for i in range(6):
-            if i < lr1:
-                d1 = rs1[i]
-            else:
-                d1 = 0
-            if i < lr2:
-                d2 = rs2[i]
-            else:
-                d2 = 0
-            if d1 == 1:
-                r = 0xa
-            elif d1 == 2:
-                r = 0xe
-            else:
-                r = 0
-            if d2 == 1:
-                r |= 0x20
-            elif d2 == 2:
-                r |= 0x70
-            rmem.append(r)
-        rmem.append(0)
-    return bytes(rmem)
+        for r_st, r_ed in mrngs:
+            rlen = r_ed - r_st
+            rs.append(pe.read(r_st, rlen))
+        db = b''.join(rs)
+        pe.replace(addr, db)
+        return f'copy to addr:0x{addr:08X}/0x{addr+len(db)-1:08X}'
+    return _copy
 
 class c_label_ctx:
     def __init__(self):
@@ -400,7 +371,10 @@ MOD_DLLS = {
             (data_ext, insert_sect(0x10, {
                 'name': '.chrst', 'like': '.rdata',
             })),
+            # insert new gbk charset
             (data_ext, vtmb_fbm_charset()),
+            # replace old ascii charset from 0x1b to 0x7f
+            (data_ext + (0x80+0x1b)*8, from_mem((0x232ee8, 0x233210))),
             (0xc7a36, [
                 I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.EBX, index=R.EAX, scale=8, displ=base_addr+data_ext, displ_size=4)),
             ]),
@@ -1225,14 +1199,23 @@ class c_pe_file(c_mark):
         self._insert_sect(src_sect_info, cfg)
         self.ext_sect(idx, dlen)
 
-    def _access(self, a_st, a_ed):
+    def _access(self, a_st, a_ed, ext = True):
         sect_info, offs_sect = self._get_sect_by_addr(a_st, None, True)
         s_st = sect_info['addr']
         s_ed = s_st + sect_info['size']
         s_ed_v = s_st + sect_info['size_v']
         if a_ed > s_ed or a_ed > s_ed_v:
-            self.ext_sect(sect_info['idx'], a_ed - s_st)
+            if ext:
+                self.ext_sect(sect_info['idx'], a_ed - s_st)
+            else:
+                raise ValueError(report(
+                    f'access 0x{a_st:x}/0x{a_ed:x} cross section {sect_info["name"]}'))
         return sect_info, offs_sect
+
+    def read(self, r_addr, rlen):
+        sect_info, offs_sect = self._access(r_addr, r_addr + rlen, False)
+        mk = sect_info['mark']
+        return mk.BYTES(offs_sect, rlen)
 
     def replace(self, r_addr, dst):
         rlen = len(dst)
