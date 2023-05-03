@@ -602,16 +602,9 @@ MOD_TXTS = {
     },
 }
 
-if __name__ == '1__main__':
+if __name__ == '__main__':
     from pprint import pprint as ppr
     tm = c_txt_mod(TM_CFG, MOD_TXTS, WORK_FILE)
     tm.parse()
     tm.modify()
     tm.save()
-else:
-    from pprint import pprint as ppr
-    cp = c_lip_parser(MOD_TXTS['lip'], {})
-    cp.load(r'D:\Tencent\QQusers\510110573\FileRecv\radio_loop_1.lip')
-    cp.parse()
-    cp.dat[[*cp.dat.keys()][5]] = '\ntest here\nok.\n'
-    cp.modify()

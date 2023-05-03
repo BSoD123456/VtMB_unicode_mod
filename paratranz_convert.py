@@ -208,34 +208,43 @@ class c_paratranz_convert:
                 (s, d), = ((k, v) for k, v in txts.items())
                 assert not s and not d
                 continue
-            assert tlen == 2
             fkey, fname = os.path.split(fpath)
             fkey = os.path.join(fkey, self._trim_file_name(fname))
-            (ttl_s, ttl_d), (s, d) = ((k, v) for k, v in txts.items())
-            if ttl_s:
-                _n1, _n2 = os.path.splitext(fkey)
-                fkey = ''.join([_n1, '-' + ttl_s.lower(), _n2])
-            cmt = None
-            if (ttl_s or ttl_d) and fkey in rs:
-                o_ttl_s, o_ttl_d = rt[fkey]
-                if o_ttl_s != ttl_s:
-                    if o_ttl_s.lower() == ttl_s.lower():
-                        report(f'warning: unmatch title in case {o_ttl_s}/{ttl_s}: {fpath}')
-                        cmt = ttl_s
+            for i, (s, d) in enumerate(txts.items()):
+                if i == 0:
+                    ttl_s = s
+                    ttl_d = d
+                    if ttl_s:
+                        _n1, _n2 = os.path.splitext(fkey)
+                        fkey = ''.join([_n1, '-' + ttl_s.lower(), _n2])
+                    cmt = None
+                    if (ttl_s or ttl_d) and fkey in rs:
+                        o_ttl_s, o_ttl_d = rt[fkey]
+                        if o_ttl_s != ttl_s:
+                            if o_ttl_s.lower() == ttl_s.lower():
+                                report(f'warning: unmatch title in case {o_ttl_s}/{ttl_s}: {fpath}')
+                                cmt = ttl_s
+                            else:
+                                raise ValueError(report(
+                                    f'error: unmatch title for lip: {fpath}'))
+                        if o_ttl_d and ttl_d:
+                            if o_ttl_d != ttl_d:
+                                raise ValueError(report(
+                                    f'error: unmatch title for lip: {fpath}'))
+                        elif ttl_d:
+                            rt[fkey][1] = ttl_d
+                    elif not fkey in rs:
+                        rt[fkey] = [ttl_s, ttl_d]
+                        rs[fkey] = []
+                    continue
+                if s or d:
+                    if i < tlen - 1:
+                        _n = '#'.join((fname, str(i)))
+                        _c = None
                     else:
-                        raise ValueError(report(
-                            f'error: unmatch title for lip: {fpath}'))
-                if o_ttl_d and ttl_d:
-                    if o_ttl_d != ttl_d:
-                        raise ValueError(report(
-                            f'error: unmatch title for lip: {fpath}'))
-                elif ttl_d:
-                    rt[fkey][1] = ttl_d
-            elif not fkey in rs:
-                rt[fkey] = [ttl_s, ttl_d]
-                rs[fkey] = []
-            if s or d:
-                rs[fkey].append(self._prtz_item(fname, s, d, cmt))
+                        _n = fname
+                        _c = cmt
+                    rs[fkey].append(self._prtz_item(_n, s, d, _c))
         for fkey, itms in rs.items():
             r = []
             ttl_s, ttl_d = rt[fkey]
@@ -305,6 +314,7 @@ class c_paratranz_convert:
         if not dat:
             return
         ttl = ('', '')
+        cch = {}
         for i, itm in enumerate(dat):
             key = self._prtz_key(itm)
             s, d = self._prtz_pair(itm)
@@ -313,16 +323,19 @@ class c_paratranz_convert:
                 assert i == 0
                 ttl = (s, d)
                 continue
+            elif '#' in key:
+                cch[s] = d
+                continue
+            rdat = {}
             if cmt:
-                yield key, {
-                    cmt: ttl[1],
-                    s: d
-                }
+                rdat[cmt] = ttl[1]
             else:
-                yield key, {
-                    ttl[0]: ttl[1],
-                    s: d
-                }
+                rdat[ttl[0]] = ttl[1]
+            if cch:
+                rdat.update(cch)
+                cch = {}
+            rdat[s] = d
+            yield key, rdat
 
     def _cmp(self, v1, v2, path):
         if type(v1) != type(v2):
