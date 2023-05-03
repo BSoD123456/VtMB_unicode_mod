@@ -222,7 +222,7 @@ class c_lip_parser(c_parser):
         title = None
         for li, line in enumerate(self.txt.splitlines()):
             li += 1
-            if not line:
+            if not line and not cur:
                 continue
             elif line == '{':
                 if title is None:
@@ -351,6 +351,26 @@ class c_lip_parser(c_parser):
         else:
             return txt
 
+    def _merge_txt_sect(self, txt_sect):
+        r_sect = []
+        r_line = []
+        for line in txt_sect:
+            if not isinstance(line, str):
+                raise ValueError(report(f'invalid english sect item: {line}'))
+            if line.startswith('PHRASE'):
+                empty_line = []
+                while r_line and not r_line[-1]:
+                    empty_line.append(r_line.pop())
+                if r_line:
+                    r_sect.append('\n'.join(r_line))
+                    r_line = []
+                if empty_line:
+                    r_sect.extend(empty_line)
+            r_line.append(line)
+        if r_line:
+            r_sect.append('\n'.join(r_line))
+        return r_sect
+
     def parse(self):
         dirty = False
         self.sect = self._parse_sect()
@@ -387,22 +407,26 @@ class c_lip_parser(c_parser):
                 break
         if spk_name is None:
             raise ValueError(report(f'missing speaker_name'))
-        if len(txt_sect) != 1:
+        txt_sect = self._merge_txt_sect(txt_sect)
+        if not txt_sect:
             raise ValueError(report(f'invalid sector english'))
-        line = txt_sect[0]
-        if not isinstance(line, str):
-            raise ValueError(report(f'invalid sect item: {line}'))
-        line = self._parse_txt(line)
         if not spk_name in self.dat:
             self.dat[spk_name] = ''
             dirty = True
-        if not line in self.dat:
-            self.dat[line] = ''
-            dirty = True
+        for line in txt_sect:
+            if not line:
+                continue
+            assert isinstance(line, str)
+            line = self._parse_txt(line)
+            if not line in self.dat:
+                self.dat[line] = ''
+                dirty = True
         return dirty
 
     def _replace_content(self, path, content):
         if path in ['english', 'CLOSECAPTION/english']:
+            if not content:
+                return content
             stxt, shd, stl = self._parse_txt(content, True, True)
             if stxt in self.dat and self.dat[stxt]:
                 dtxt = self.dat[stxt]
@@ -420,7 +444,15 @@ class c_lip_parser(c_parser):
                     return hd + self.dat[stxt]
         return content
 
+    def _pre_pack_sect(self, path, sect):
+        if path in ['english', 'CLOSECAPTION/english']:
+            if any(not isinstance(line, str) for line in sect):
+                raise ValueError(report(f'invalid english sect item'))
+            return self._merge_txt_sect(sect)
+        return sect
+
     def _pack_sect(self, sect, path, rs):
+        sect = self._pre_pack_sect(path, sect)
         for v in sect:
             if not isinstance(v, tuple):
                 nctt = self._replace_content(path, v)
@@ -570,9 +602,16 @@ MOD_TXTS = {
     },
 }
 
-if __name__ == '__main__':
+if __name__ == '1__main__':
     from pprint import pprint as ppr
     tm = c_txt_mod(TM_CFG, MOD_TXTS, WORK_FILE)
     tm.parse()
     tm.modify()
     tm.save()
+else:
+    from pprint import pprint as ppr
+    cp = c_lip_parser(MOD_TXTS['lip'], {})
+    cp.load(r'D:\Tencent\QQusers\510110573\FileRecv\radio_loop_1.lip')
+    cp.parse()
+    cp.dat[[*cp.dat.keys()][5]] = '\ntest here\nok.\n'
+    cp.modify()
