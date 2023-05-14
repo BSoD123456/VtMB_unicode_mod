@@ -88,7 +88,11 @@ class c_parser:
     def save(self, path):
         if not self.dirty:
             return False
-        mod = self.txt.encode(self.d_codec)
+        try:
+            mod = self.txt.encode(self.d_codec)
+        except UnicodeEncodeError:
+            mod = self.txt.encode(errors = 'replace')
+            self.warning('modify', f'invalid char for encoding in: {path}')
         with open(path, 'wb') as fd:
             fd.write(mod)
         return True
