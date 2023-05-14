@@ -92,7 +92,7 @@ class c_parser:
             mod = self.txt.encode(self.d_codec)
         except UnicodeEncodeError:
             mod = self.txt.encode(self.d_codec, errors = 'replace')
-            self.warning('modify', f'invalid char for encoding in: {path}')
+            self.warning('modify', f'invalid chars for {self.d_codec} encoding')
         with open(path, 'wb') as fd:
             fd.write(mod)
         return True
@@ -436,7 +436,11 @@ class c_lip_parser(c_parser):
                 dtxt = self.dat[stxt]
                 if dtxt[0] != SYM_NOQUOTE:
                     dtxt = '"' + dtxt + '"'
-                dlen = len(dtxt.encode(self.d_codec))
+                try:
+                    dlen = len(dtxt.encode(self.d_codec))
+                except UnicodeEncodeError:
+                    dlen = len(dtxt.encode(self.d_codec, errors = 'replace'))
+                    self.warning('modify', f'invalid chars for {self.d_codec} encoding in:\n{dtxt}')
                 self.dirty = True
                 return ''.join([shd, f'char {dlen} ', dtxt, stl])
         elif path == 'OPTIONS':
