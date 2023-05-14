@@ -91,7 +91,7 @@ class c_parser:
         try:
             mod = self.txt.encode(self.d_codec)
         except UnicodeEncodeError:
-            mod = self.txt.encode(errors = 'replace')
+            mod = self.txt.encode(self.d_codec, errors = 'replace')
             self.warning('modify', f'invalid char for encoding in: {path}')
         with open(path, 'wb') as fd:
             fd.write(mod)
