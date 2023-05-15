@@ -352,17 +352,34 @@ MOD_DLLS = {
             ]),
         ],
     },
-##    'vgui2': {
-##        'path': 'Bin',
-##        'file': 'vgui2.dll',
-##        'md5':  '21347f4265fa01173f09e31dc57ddbce',
-##        'patch': [
+    'vgui2': {
+        'path': 'Bin',
+        'file': 'vgui2.dll',
+        'md5':  '21347f4265fa01173f09e31dc57ddbce',
+        'patch': [
 ##            # CLocalizedStringTable::ConvertANSIToUnicode CP_ACP -> CP_OEMCP (GBK)
 ##            (0x9373, [
 ##                I.create_u32(C.PUSHD_IMM8, 1),
 ##            ]),
-##        ],
-##    },
+            # CLocalizedStringTable::ConvertANSIToUnicode CP_ACP -> CP936 (GBK)
+            (0x9370, [
+                I.create_branch(C.CALL_REL32_32, 0x93a3),
+            ]),
+            # CLocalizedStringTable::ConvertUnicodeToANSI CP_ACP -> CP936 (GBK)
+            (0x9394, [
+                I.create_branch(C.CALL_REL32_32, 0x93a3),
+            ]),
+            # push CP936
+            (0x93a3, [
+                I.create_reg(C.POP_R32, R.EAX),
+                I.create_reg(C.PUSH_R32, R.EDX),
+                I.create_u32(C.PUSHD_IMM8, 0),
+                I.create_u32(C.PUSHD_IMM32, 936),
+                I.create_reg(C.PUSH_R32, R.EAX),
+                I.create(C.RETND),
+            ]),
+        ],
+    },
     'client': {
         'path': 'Unofficial_Patch\cl_dlls',
         'file': 'client.dll',

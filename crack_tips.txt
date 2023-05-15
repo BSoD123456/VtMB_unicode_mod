@@ -416,3 +416,9 @@ client:1CDB0000
 2002DA1F -> call client.1CE783A0
   1CE7842A -> call client.1CE77F50 # set all terminal buff to 0xa0a0
     1CE77F88 # set all buff to 0xa0a0
+
+
+
+vgui2:00420000
+00429360 # invoke MultiByteToWideChar
+00429380 # invoke WideCharToMultiByte
