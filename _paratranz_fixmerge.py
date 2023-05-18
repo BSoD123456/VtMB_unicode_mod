@@ -23,6 +23,7 @@ def merge_dir(bas, mod, out):
     if not os.path.exists(bas):
         raise ValueError(report('error:', f'not exists: {bas}'))
     elif not os.path.exists(mod):
+        shutil.copy(bas, ensure_path(out))
         report('warning:', f'not exists: {mod}')
         return
     elif not os.path.isdir(bas) and not os.path.isdir(mod):
@@ -65,6 +66,8 @@ def merge_file(bas, mod, out, ikeys = IMPORT_KEYS, tkey = TRANS_KEY):
         return
     mdat = load_json(mod)
     if not mdat:
+        shutil.copyfile(bas, ensure_path(out))
+        report('warning:', f'file is empty: {mod}')
         return
     bat_rpt_log = {}
     def batch_report(typ, key):
