@@ -448,12 +448,22 @@ engine.2002C814 -> call ebp (2002B890)
                     engine.2003CC19 -> call ... # call filesystem_io to open *.lip file
                       002C30B5 -> call filesystem_stdio.2C2A50
                 20137817 # if no lip file then break
-                2013781D # lip parse start here
+                2013781D # lip parse start here  (<- can break here)
+                20137863 -> call dword ptr ds:[edx+4] # read lip file content to 2 buf (1 dest, 1 temp)
+                20137871 -> call dword ptr ds:[edx+8] # do something, and clear that temp buf
+                2013788C -> call engine.200DCE10 # copy subtitle raw from that dest buf to another buf, and parsed to a UTF16LE buf with linebreak
+                  200DCF52 -> call engine.200DEEE0 # parse lip script
+                    200DF1A6 -> call engine.200DC200 # parse closecaption sect
+                      200DC3DA -> call engine.20103FF0 # copy subtitle raw to another buf
+                        20104053 # copy lip content from file buf(esi) to script buf(edi)
+                      200DC435 -> call engine.2010B970 # maybe parse subtitle
+                        2010B985 -> call dword ptr ds:[<&MultiByteToWideChar>]
+                201378A8 -> call dword ptr ds:[<&Plat_Free>] # free that dest buf
 
 2008C377 -> call engine.20120480
   20120811 -> call engine.20118880 # related to above print subtitle
     20118991 -> call engine.200DF3E0
-      200DF48A -> call engine.200DB790
+      200DF48A -> call engine.200DB790 # after this call, raw subtitle buf parsed to multiple buf with linebreak
         200DB7C9 -> call kernel32.WideCharToMultiByte # read file to buff(2129CB20)
         200DB7E4 -> call engine.200DB610
           200DB62B -> call dword ptr ds:[<&Q_trimspace>]
@@ -462,4 +472,4 @@ engine.2002C814 -> call ebp (2002B890)
                 vstdlib.00234EF9 # copy file content buff(2129CB20) to another buff(2129D330)
           200DB742 -> call dword ptr ds:[<&Q_strncpy>]
           200DB773 -> call dword ptr ds:[<&Q_strncpy>]
-  
+
