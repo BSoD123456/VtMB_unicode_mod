@@ -297,7 +297,7 @@ loading tips:
 
 print subtitle:
 
-1CFE2849 -> client.1CFE9EF0 # draw text
+1CFE2849 -> client.1CFE9EF0 # draw text: [[sp + 0x5 * 6] + 0x1c] is text hndl
   1CFE9F7E -> client.1D0034F4 # copy text to local stack buff
   1CFEA087 # check space and newline ?
   1CFEA0F6 # loop here
@@ -305,6 +305,9 @@ print subtitle:
   1CFEA1CC -> vguimatsurface.0279F1C0 # DrawUnicodeChar
   1CFEA203 # loop end
 
+engine.20120811 -> call engine.20118880 # maybe load sound and subtitle main entry
+  engine.201189E4 -> call ([edx+a8]) # related to next
+...
 1CF222F0 -> call client.1CF21FB0
   1CF21FFA -> call client.1CF22060
     1CF223CA -> client.1CFE23F0
@@ -422,3 +425,41 @@ client:1CDB0000
 vgui2:00420000
 00429360 # invoke MultiByteToWideChar
 00429380 # invoke WideCharToMultiByte
+
+
+
+load subtitle:
+
+engine:20000000
+
+engine.2002C814 -> call ebp (2002B890)
+  engine.2002B94E -> call engine.20028DE0 # maybe load sound main entry
+    engine.20028E49 -> call engine.201191E0
+      engine.2011922A -> call engine.2013B870
+        engine.2013B957 -> call engine.2013B090
+          engine.2013B0B0 -> call engine.2013ADF0 # load sound and lip script
+            engine.2013AE0B -> call engine.20002670 # load sound wav file
+              engine.20002681 -> call dword ptr ds:[eax](engine.20002A90) # maybe load sound or parse lip script file
+                engine.20002AE5 -> call engine.2003CC00 # maybe open sound or lip script file
+            engine.2013AFC5 -> call engine.20139D60
+              engine.20139DCF -> call engine.201377A0 # maybe load lip script file
+                engine.20137811 -> call [edx](engine.20002A90) # maybe load sound or parse lip script file
+                  engine.20002AE5 -> call engine.2003CC00 # maybe open sound or lip script file
+                    engine.2003CC19 -> call ... # call filesystem_io to open *.lip file
+                      002C30B5 -> call filesystem_stdio.2C2A50
+                20137817 # if no lip file then break
+                2013781D # lip parse start here
+
+2008C377 -> call engine.20120480
+  20120811 -> call engine.20118880 # related to above print subtitle
+    20118991 -> call engine.200DF3E0
+      200DF48A -> call engine.200DB790
+        200DB7C9 -> call kernel32.WideCharToMultiByte # read file to buff(2129CB20)
+        200DB7E4 -> call engine.200DB610
+          200DB62B -> call dword ptr ds:[<&Q_trimspace>]
+            00234037 -> call <vstdlib.Q_strncpy>
+              002337D6 -> call vstdlib.234E70
+                vstdlib.00234EF9 # copy file content buff(2129CB20) to another buff(2129D330)
+          200DB742 -> call dword ptr ds:[<&Q_strncpy>]
+          200DB773 -> call dword ptr ds:[<&Q_strncpy>]
+  
