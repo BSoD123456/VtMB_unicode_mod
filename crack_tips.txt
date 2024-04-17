@@ -463,13 +463,13 @@ engine.2002C814 -> call ebp (2002B890)
 2008C377 -> call engine.20120480
   20120811 -> call engine.20118880 # related to above print subtitle
     20118991 -> call engine.200DF3E0
-      200DF48A -> call engine.200DB790 # after this call, raw subtitle buf parsed to multiple buf with linebreak
+      200DF48A -> call engine.200DB790 # after this call, raw subtitle buf parsed to multiple buf with linebreak (<- text main modifier)
         200DB7C9 -> call kernel32.WideCharToMultiByte # read file to buff(2129CB20)
-        200DB7E4 -> call engine.200DB610
+        200DB7E4 -> call engine.200DB610 # modify subtitle, trim space and quote
           200DB62B -> call dword ptr ds:[<&Q_trimspace>]
             00234037 -> call <vstdlib.Q_strncpy>
               002337D6 -> call vstdlib.234E70
                 vstdlib.00234EF9 # copy file content buff(2129CB20) to another buff(2129D330)
           200DB742 -> call dword ptr ds:[<&Q_strncpy>]
           200DB773 -> call dword ptr ds:[<&Q_strncpy>]
-
+        200DB810 # check ".!?" for auto line break  (<- line break here)
