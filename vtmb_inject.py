@@ -699,9 +699,58 @@ MOD_DLLS = {
             (code_ext, insert_sect(data_ext - code_ext, {
                 'name': '.hook', 'like': '.text',
             })),
+            # auto line break in subtitle
+            (0xDB803, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[0]),
+                I.create(C.NOPD),
+            ]),
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
-                I.create_reg_u32(C.OR_RM16_IMM16, R.AX, 0x80),
-                I.create_branch(C.JMP_REL32_32, 0xc7a11),
+                I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.EBX)),
+                #I.create_reg_reg(C.XCHG_RM8_R8, R.AH, R.AL),
+                I.create_reg_reg(C.TEST_RM8_R8, R.AL, R.AL),
+                I.create_reg_reg(C.MOV_R32_RM32, R.EBP, R.EBX),
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2')),
+                
+                lbc.add('ph1',
+                    I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x2e), # "."
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x3f), # "?"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
+                
+                I.create_reg(C.INC_R32, R.EBP),
+                I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.EBP)),
+                I.create_reg_reg(C.TEST_RM8_R8, R.AL, R.AL),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('ph1')),
+
+                lbc.add('ph1done',
+                    I.create_reg_reg(C.TEST_RM8_R8, R.AL, R.AL),
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('done')),
+
+                lbc.add('ph2',
+                    I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x20), # " "
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('done')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x2e), # "."
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2done')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x3f), # "?"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2done')),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
+                I.create_branch(C.JNE_REL32_32, lbc.lb('done')),
+
+                lbc.add('ph2done',
+                    I.create_reg(C.INC_R32, R.EBP),
+                ),
+                I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.EBP)),
+                I.create_reg_reg(C.TEST_RM8_R8, R.AL, R.AL),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('ph2')),
+                
+                lbc.add('done',
+                    I.create_branch(C.JMP_REL32_32, 0xDB848),
+                ),
             ])),
         ])(0x10000000, 0x1391000, 0x1392000, [0], []),
     },
