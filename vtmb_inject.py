@@ -689,6 +689,22 @@ MOD_DLLS = {
             ])),
         ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380], []),
     },
+    'engine': {
+        'path': 'Bin',
+        'file': 'engine.dll',
+        'md5':  'fafa9e361f08c505a63b1b5a353b2b01',
+        'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
+            #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
+            # insert new sect before .reloc
+            (code_ext, insert_sect(data_ext - code_ext, {
+                'name': '.hook', 'like': '.text',
+            })),
+            (code_ext + hooks[0], with_label_ctx(lambda lbc: [
+                I.create_reg_u32(C.OR_RM16_IMM16, R.AX, 0x80),
+                I.create_branch(C.JMP_REL32_32, 0xc7a11),
+            ])),
+        ])(0x10000000, 0x1391000, 0x1392000, [0], []),
+    },
 }
 
 def hash_md5(val):
@@ -1080,6 +1096,10 @@ class c_pe_file(c_mark):
                         ti_flg = (ti_v & 0x80000000)
                     if ti_flg:
                         report(f'warning: import tab by ord 0x{ti_addr:x}')
+                        if flag_32plus:
+                            offs_idx += 0x8
+                        else:
+                            offs_idx += 0x4
                         continue
                     if ti_addr >= st_addr and (ed_addr is None or ti_addr < ed_addr):
                         ti_addr += elen_v
@@ -1724,5 +1744,7 @@ class c_pe_patcher:
 if __name__ == '__main__':
     from pprint import pprint as ppr
     pt = c_pe_patcher(PP_CFG, MOD_DLLS)
-    pt.patch_all()
-    pt.save_all(True)
+    pt.patch('engine')
+    pt.save_dst('engine', True)
+    #pt.patch_all()
+    #pt.save_all(True)
