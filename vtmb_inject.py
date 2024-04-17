@@ -720,6 +720,10 @@ MOD_DLLS = {
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
 
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xbfa3), # "？"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa1a3), # "！"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
                 I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa3a1), # "。"
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
                 
@@ -744,6 +748,10 @@ MOD_DLLS = {
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph2done')),
 
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xbfa3), # "？"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2done_w')),
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa1a3), # "！"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2done_w')),
                 I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa3a1), # "。"
                 I.create_branch(C.JNE_REL32_32, lbc.lb('done')),
 
@@ -1803,7 +1811,5 @@ class c_pe_patcher:
 if __name__ == '__main__':
     from pprint import pprint as ppr
     pt = c_pe_patcher(PP_CFG, MOD_DLLS)
-    pt.patch('engine')
-    pt.save_dst('engine', True)
-    #pt.patch_all()
-    #pt.save_all(True)
+    pt.patch_all()
+    pt.save_all(True)
