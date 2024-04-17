@@ -719,6 +719,9 @@ MOD_DLLS = {
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
+
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa3a1), # "。"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph1done')),
                 
                 I.create_reg(C.INC_R32, R.EBP),
                 I.create_reg_mem(C.MOV_R16_RM16, R.AX, M(R.EBP)),
@@ -739,7 +742,14 @@ MOD_DLLS = {
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x3f), # "?"
                 I.create_branch(C.JE_REL32_32, lbc.lb('ph2done')),
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x21), # "!"
+                I.create_branch(C.JE_REL32_32, lbc.lb('ph2done')),
+
+                I.create_reg_u32(C.CMP_AX_IMM16, R.AX, 0xa3a1), # "。"
                 I.create_branch(C.JNE_REL32_32, lbc.lb('done')),
+
+                lbc.add('ph2done_w',
+                    I.create_reg(C.INC_R32, R.EBP),
+                ),
 
                 lbc.add('ph2done',
                     I.create_reg(C.INC_R32, R.EBP),
