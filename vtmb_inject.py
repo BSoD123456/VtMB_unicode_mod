@@ -692,7 +692,8 @@ MOD_DLLS = {
     'engine': {
         'path': 'Bin',
         'file': 'engine.dll',
-        'md5':  'fafa9e361f08c505a63b1b5a353b2b01',
+        #'md5':  'fafa9e361f08c505a63b1b5a353b2b01',
+        'md5':  'bfc51e7dc7988107d6942caae20d9fe6',
         'patch': (lambda base_addr, code_ext, data_ext, hooks, funcs:[
             #(code_ext - 1, b'\xcc\xcc'), # force extend code sect
             # insert new sect before .reloc
