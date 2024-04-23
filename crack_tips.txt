@@ -85,7 +85,7 @@ gameui.050F5C89 ->
     1E35D952 -> call client.1E35D550 # (no:print char) get char width
     1E35D97A -> <&Q_isprint>
     1E35DA26 # read char with movsx, read to cx, so it will be 0xff80+, still in font range !
-    1E35DA31 -> vguimatsurface.024AF1C0 # print char !! draw entry without width fix, break here. mod pushed cx
+    1E35DA31 -> vguimatsurface.024AF1C0 # print char !! draw entry without width fix, break here. mod pushed cx  (DrawUnicodeChar with ansi text, if c > 0x80, c must be neg)
       vguimatsurface.024AF244 -> vguimatsurface.024AF190 # replace some wchar to ansi char
       vguimatsurface.024AF290 -> vguimatsurface.024AF040 # CMatSystemSurface::GetCharABCwide
       vguimatsurface.024AF29d ->   # get char width info, maybe GetTextureForChar
