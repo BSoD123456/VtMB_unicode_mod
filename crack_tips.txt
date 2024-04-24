@@ -473,3 +473,18 @@ engine.2002C814 -> call ebp (2002B890)
           200DB742 -> call dword ptr ds:[<&Q_strncpy>]
           200DB773 -> call dword ptr ds:[<&Q_strncpy>]
         200DB810 # check ".!?" for auto line break  (<- line break here)
+
+
+
+load UI word:
+
+2002DFA2 -> call engine.2002E9F0 # exec cfg or something script line, goto UI after command: createplayer
+  1D0B3390 -> call client.1D0B37C0
+    1D0B3935 -> call client.1D0B6520
+      1D0B667F -> call client.1D0B66E0
+        1D0B6BF2 -> call client.1D0B7080 # break here
+          1D0B70AA -> call client.1D11159D
+            1D1115C6 -> call client.1D114776
+              1D114E5E -> call client.1D114F1D
+                client.1D114BDF cmp byte ptr ds:[eax],0 # eax:"Hcstory"
+                1D114F33 movsx eax,byte ptr ds:[esi] # esi:"Hcstory"
