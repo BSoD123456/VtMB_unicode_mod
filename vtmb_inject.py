@@ -499,6 +499,28 @@ MOD_DLLS = {
                 I.create(C.NOPD),
                 I.create(C.NOPD),
             ] if MOD_OPTION['terminal_8bits'] else None),
+            # dialog choice linebreak modify
+            # dlg_chc_lnbrk init loop
+            (0x53d5c,[
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[5]),
+                I.create(C.NOPD),
+            ]),
+            # dlg_chc_lnbrk find breakable char
+            (0x53dca,[
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[6]),
+            ]),
+            # dlg_chc_lnbrk modify breakable char to EOS
+            (0x53d6c,[
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[7]),
+                I.create(C.NOPD), I.create(C.NOPD),
+                I.create(C.NOPD), I.create(C.NOPD),
+            ]),
+            # dlg_chc_lnbrk recover breakable char
+            (0x53d7b,[
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[8]),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+            ]),
             # hooks find breakable char
             (code_ext + hooks[0], with_label_ctx(lambda lbc: [
                 I.create_reg_reg(C.MOV_R32_RM32, R.EDX, R.EBP),
@@ -687,7 +709,94 @@ MOD_DLLS = {
                 I.create_reg_u32(C.MOV_R32_IMM32, R.EDX, 0x7),
                 I.create_branch(C.JMP_REL32_32, 0xc7a44),
             ])),
-        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380], []),
+            # hook dlg_chc_lnbrk init loop
+            (code_ext + hooks[5], with_label_ctx(lambda lbc: [
+                I.create_reg_reg(C.XOR_R32_RM32, R.EDX, R.EDX),
+                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.ESP, displ=0x28, displ_size=1)),
+                I.create_reg_reg(C.TEST_RM32_R32, R.ECX, R.ECX),
+                I.create_branch(C.JMP_REL32_32, 0x53d62),
+            ])),
+            # hook dlg_chc_lnbrk find breakable char
+            (code_ext + hooks[6], with_label_ctx(lambda lbc: [
+                # check byte-2 flag
+                I.create_reg_reg(C.TEST_RM8_R8, R.DH, R.DH),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('pre-breakable')),
+                # char start
+                # read cur char
+                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.ESP, index=R.EDI, displ=0x30, displ_size=1)),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0x80),
+                I.create_branch(C.JB_REL32_32, lbc.lb('ascii')),
+                # is byte-1
+                I.create_reg_u32(C.MOV_R8_IMM8, R.DH, 1),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('unbreakable')),
+                # is ascii
+                lbc.add('ascii',
+                    I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0x20),
+                ),
+                I.create_branch(C.JE_REL32_32, lbc.lb('pre-breakable')),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0x2d),
+                I.create_branch(C.JNE_REL32_32, lbc.lb('unbreakable')),
+                # is preliminary breakable
+                # check punctuation
+                lbc.add('pre-breakable',
+                    # clear byte-2 flag
+                    I.create_reg_reg(C.XOR_R8_RM8, R.DH, R.DH),
+                ),
+                # read next char
+                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.ESP, index=R.EDI, displ=0x31, displ_size=1)),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0xa1),
+                I.create_branch(C.JB_REL32_32, lbc.lb('breakable')),
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0xa9),
+                I.create_branch(C.JBE_REL32_32, lbc.lb('unbreakable')),
+                # breakable
+                lbc.add('breakable',
+                    I.create_reg_reg(C.MOV_R32_RM32, R.EBX, R.EDI),
+                ),
+                # unbreakable
+                lbc.add('unbreakable',
+                    I.create_branch(C.JMP_REL32_32, 0x53dd3),
+                ),
+            ])),
+            # hook dlg_chc_lnbrk modify breakable char to EOS
+            (code_ext + hooks[7], with_label_ctx(lambda lbc: [
+                # read breakable char
+                I.create_reg_mem(C.MOV_R8_RM8, R.DL, M(R.ESP, index=R.EBX, displ=0x30, displ_size=1)),
+                # shift ebx to save breakable char
+                I.create_reg_reg(C.MOV_R32_RM32, R.EAX, R.EBX),
+                I.create_reg_u32(C.SHL_RM32_IMM8, R.EBX, 16),
+                # check if breakable char is space
+                I.create_reg_u32(C.CMP_RM8_IMM8, R.DL, 0x20),
+                I.create_branch(C.JE_REL32_32, lbc.lb('overwrite')),
+                # not space
+                # save breakable char
+                I.create_reg(C.INC_R32, R.EAX),
+                I.create_reg_mem(C.MOV_R8_RM8, R.BL, M(R.ESP, index=R.EAX, displ=0x30, displ_size=1)),
+                # overwrite breakable char to EOS
+                lbc.add('overwrite',
+                    I.create_mem_u32(C.MOV_RM8_IMM8, M(R.ESP, index=R.EAX, displ=0x30, displ_size=1), 0),
+                ),
+                # done
+                I.create_reg_mem(C.LEA_R32_M, R.EDX, M(R.ESP, index=R.ESI, displ=0x30, displ_size=1)),
+                I.create_branch(C.JMP_REL32_32, 0x53d75),
+            ])),
+            # hook dlg_chc_lnbrk recover breakable char
+            (code_ext + hooks[8], with_label_ctx(lambda lbc: [
+                # recover ebx
+                I.create_reg_reg(C.MOV_R8_RM8, R.CL, R.BL),
+                I.create_reg_u32(C.SHR_RM32_IMM8, R.EBX, 16),
+                # check saved breakable char
+                I.create_reg_reg(C.TEST_RM8_R8, R.CL, R.CL),
+                I.create_branch(C.JE_REL32_32, lbc.lb('done')),
+                # recover breakable char, +1 for next char, +4 for call stack offset
+                I.create_mem_reg(C.MOV_RM8_R8, M(R.ESP, index=R.EBX, displ=0x35, displ_size=1), R.CL),
+                # done
+                lbc.add('done',
+                    I.create_reg_mem(C.MOV_R32_RM32, R.ESI, M(R.ESP, displ=0x24, displ_size=1)),
+                ),
+                I.create_reg_u32(C.ADD_RM32_IMM8, R.ESP, 4),
+                I.create_branch(C.JMP_REL32_32, 0x53d82),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380, 0x400, 0x480, 0x500, 0x580], []),
     },
     'engine': {
         'path': 'Bin',

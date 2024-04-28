@@ -488,3 +488,21 @@ load UI word:
               1D114E5E -> call client.1D114F1D
                 client.1D114BDF cmp byte ptr ds:[eax],0 # eax:"Hcstory"
                 1D114F33 movsx eax,byte ptr ds:[esi] # esi:"Hcstory"
+
+
+dlg choice handle:
+
+1D8F3C18 -> call client.1D8F3C70 # break line and maybe print(not care), only for dlg choice
+  1D8F3D57 -> call client.1D8F56D0 # get limited max char len
+  1D8F3D64 # loop here
+  1D8F3D6A # if exceed max char len:
+  1D8F3D70 # set the last space(0x20) to EOS(\0)
+  1D8F3D76 -> call client.1DA8296C # copy string to a new alloced buf
+    1DA82976 -> call client.1DA73E10 # get len(str) with EOS(\0)
+    1DA8297D -> call client.1DA72C14 # malloc(len+1)
+    1DA8298A -> call client.1DA777B0 # str copy
+  1D8F3DC3 -> call client.1D8F56D0 # get limited max char len (next line)
+  1D8F3DCA # else: compare space(0x20) from [sp+30] with edi as index
+  1D8F3DD1 # record last space(0x20) position to ebx
+  1D8F3DD8 # loop end
+
