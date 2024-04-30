@@ -506,3 +506,63 @@ dlg choice handle:
   1D8F3DD1 # record last space(0x20) position to ebx
   1D8F3DD8 # loop end
 
+python call:
+
+invoke larry.StartBarter:
+
+1E153315 -> call <vampire_python21.PyEval_EvalCode>
+  1E10F37D -> call vampire_python21.1E10F390
+    1E1114FD -> call <vampire_python21.PyObject_GetAttr
+      1E114FCE -> call vampire_python21.1E115030
+        1E115039 -> call <vampire_python21.PyString_AsString>
+    1E1119C8 -> call dword ptr ds:[edx+18] # edx: PyMethod_Type
+    1E111A0E -> call vampire_python21.1E1133A0 # invoke method
+      1E1133E1 -> call vampire_python21.1E112D90
+        1E112DDC -> call vampire_python21.1E112E70
+          1E112EDB -> call edi # jump to method list
+            vampire.07FD93C0 # StartBarter()
+            07FD94B3 -> call vampire.7E4F330
+                07FBC600 # show barter and loot
+                07F5C642 -> call vampire.7DEA1EB
+                  08103CC0 # get barter item in player's bag and store
+                  08103DD1 # big loop here, read a static var
+                  0852F018 # read another static var, some hndl plist entry
+                  08103E8F # read a new plist entry from that hndl's [hndl+0x18]
+                  08103E94 # loop here
+                  08103E96 # check if the plist item's 1st DW is some cur index
+                  08103EA0 # loop end
+                  # this item_hndl list is in system/vendors.txt
+                  08103EAD # get the plist item, the 2nd DW is the dest barter item's name pointer
+                  08103EB0 # can break here to enum barter item's name in [esi+4]
+                  08103EE8 # the 4th DW may be its price or something
+                  08103F8E # big loop end
+                  08103EE4 # check StartBarter's 1st arg, if the condition is match item_hndl's [esi+c]
+                  08103EF3 # check StartBarter's 3rd arg, if the condition is match item_hndl's [esi+10]
+                  08103F02 # if barter item is valid, here to get its name in [esi+4], sell and buy both here
+
+1D5EEFC4 -> call client.1D5ED150
+  1D5ED6D5 -> call dword ptr ds:[edx+380]
+    1D4FB700 # find sprite
+    1D4FB750 -> call client.1D5BFFA0 # get ClanData.Name
+    1D4FB76E -> call client.1D4FB160 # get dst name origin
+    1D4FB7A7 -> call client.1D4DD750 # get dst file name but _a0
+    1D4FB7CF -> call client.1D65159D # like sprintf("a_%s_%c_%c", ClanData.Name, 'm', '0')
+      1D6515C6 -> call client.1D654776
+        1D654E5E -> call client.1D654F1D
+          1D654F3D -> call client.1D654EB7 # concat ClanData.Name to another string
+    1D4FB7D9 -> call client.1D6523BD # lower case "a_xxxxx_m_0"
+    1D4FB7EB -> call client.1D5711D0 # find sprite by name "a_xxxxx_m_0"
+      1D5711D8 -> call client.1D570980
+          1D570995 # loop here
+          1D57099D # read scan_sprite_name from a name list
+          1D5709A1 -> call client.1D6515F0 # strcmp("a_xxxxx_m_1", scan_sprite_name)
+          1D5709B1 # step name list index
+          1D5709B9 # loop end
+
+1CEFC3DA -> call dword ptr ds:[edx+14]
+  1CED5FA3 -> call client.1CED5FC0
+    1CED5FDB -> call client.1CF8E580
+      # CVStatListManager_t::Update ?
+      1CF8E5EB -> call client.1CF8DDC0
+        1CF8DDD0 # loop here, copy clan key index table
+        1CF8DDF2 # loop end

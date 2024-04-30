@@ -1,0 +1,3598 @@
+"640_hud"
+{
+	SpriteData
+	{
+		"number_0"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"0"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_1"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"20"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_2"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"40"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_3"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"61"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_4"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"81"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_5"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"102"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_6"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"123"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_7"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"143"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_8"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"163"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_9"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"184"
+				"y"			"0"
+				"width"		"21"
+				"height"		"25"
+			}
+		}
+		"number_0g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"0"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_1g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"20"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_2g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"40"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_3g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"61"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_4g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"81"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_5g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"102"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_6g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"123"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_7g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"143"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_8g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"163"
+				"y"			"0"
+				"width"		"22"
+				"height"		"25"
+			}
+		}
+		"number_9g"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"184"
+				"y"			"0"
+				"width"		"21"
+				"height"		"25"
+			}
+		}
+		"number_0s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"0"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_1s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"12"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_2s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"24"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_3s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"35"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_4s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"48"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_5s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"60"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_6s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"72"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_7s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"84"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_8s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"96"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_9s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"108"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_0sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"0"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_1sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"12"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_2sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"24"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_3sg"
+		{
+			"640"
+			{
+ 				"file"		"hud1_glow"
+				"x"			"35"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_4sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"48"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_5sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"60"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_6sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"72"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_7sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"84"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_8sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"96"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_9sg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"108"
+				"y"			"30"
+				"width"		"13"
+				"height"		"14"
+			}
+		}
+		"number_burn1"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"220"
+				"y"			"0"
+				"width"		"20"
+				"height"	"28"
+			}
+		}
+		"number_burn2"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"220"
+				"y"			"0"
+				"width"		"20"
+				"height"	"28"
+			}
+		}
+		"number_burn1s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"220"
+				"y"			"0"
+				"width"		"10"
+				"height"	"14"
+			}
+		}
+		"number_burn2s"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"220"
+				"y"			"0"
+				"width"		"10"
+				"height"	"14"
+			}
+		}
+		"ammo_label"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"121"
+				"y"			"30"
+				"width"		"56"
+				"height"		"13"
+			}
+		}
+		"ammo_labelg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"121"
+				"y"			"30"
+				"width"		"57"
+				"height"		"14"
+			}
+		}
+		"autoaim_c"
+		{
+			"640"
+			{
+				"file"		"crosshairs"
+				"x"			"96"
+				"y"			"0"
+				"width"		"24"
+				"height"	"24"
+			}
+		}
+		"progress_bar"
+		{
+			"640"
+			{
+				"file"		"hud1_inner"
+				"x"			"205"
+				"y"			"0"
+				"width"		"7"
+				"height"		"30"
+			}
+		}
+		"progress_barg"
+		{
+			"640"
+			{
+				"file"		"hud1_glow"
+				"x"			"205"
+				"y"			"0"
+				"width"		"8"
+				"height"		"32"
+			}
+		}
+
+
+
+				// Vampire HUD sprites
+
+		// Items
+		"ItemFrame"  // Item Background
+		{
+			"640"
+			{
+				"file"	"hud/ItemFrame"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"ItemFrameActive"  // Item Background
+		{
+			"640"
+			{
+				"file"	"hud/ItemFrame_Active"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"SelectionFrame"  // Selected Item
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		"SelectionFrame_SELL"  // Selected Item
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame_SELL"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		"SelectionFrame_NoSELL"  // Selected Item
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame_NoSELL"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		"SelectionFrameArmr"  // Selected Item (Armor)
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame_Armor"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		"SelectionFrameArmrActive"  // Active Item (Armor)
+		{
+			"640"
+			{
+				"file"	"hud/ArmorFrame_Active"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"SelectionFrameArmr_SELL"  // Selected Item (Armor)
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame_Armor_SELL"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		"SelectionFrameArmr_NoSELL"  // Selected Item (Armor)
+		{
+			"640"
+			{
+				"file"	"hud/SelectionFrame_Armor_NoSELL"
+				"x"		"0"
+				"y"		"0"
+				"width"	"256"
+				"height"	"256"
+			}
+		}
+
+		// Base Disciplines
+		"discipline_0"  // Animalism
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Animalism_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_1"  // Auspex
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Auspex_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_2"  // Blood Healing
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_3"  // Celerity
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Celerity_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_4"  // Corpus Vampirus
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/blood_strength_base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_5"  // Dementation
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dementation_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_6"  // Dominate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dominate_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_7"  // Fortitude
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Fortitude_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_8"  // Obfuscate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Obfuscate_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_9"  // Potence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Potence_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_10"  // Presence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Presence_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_11"  // Protean
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Protean_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_12"  // Thaumaturgy
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Thaumaturgy_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_13"  // Shield of Faith (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/ShieldOfFaith_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_14"  // Divine Vision (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/HolySight_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_15"  // Holy Light (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/DivineLight_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_16"  // Mind Shield (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/MindShield_Base"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+
+
+		// FullBright Versions
+		"discipline_0s"  // Animalism
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Animalism_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_1s"  // Auspex
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Auspex_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_2s"  // Blood Healing
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_3s"  // Celerity
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_4s"  // Corpus Vampirus
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_5s"  // Dementation
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_6s"  // Dominate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_7s"  // Fortitude
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_8s"  // Obfuscate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_9s"  // Potence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_10s"  // Presence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_11s"  // Protean
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_12s"  // Thaumaturgy
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_13s"  // Shield of Faith (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/ShieldOfFaith_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_14s"  // Divine Vision (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/HolySight_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_15s"  // Holy Light (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/DivineLight_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"discipline_16s"  // Mind Shield (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/MindShield_FullBright"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+
+		// Selection Disciplines
+		"discipline_unsel_0"  // Animalism
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Animalism"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_0"  // Animalism
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Animalism_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_1"  // Auspex
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Auspex"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_1"  // Auspex
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Auspex_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_2"  // Blood Healing
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_2"  // Blood Healing
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/BloodHeal_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_3"  // Celerity
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Celerity"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_3"  // Celerity
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Celerity_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_4"  // Corpus Vampirus
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/bloodstregth"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_4"  // Corpus Vampirus
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/bloodstregth_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_5"  // Dementation
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dementation"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_5"  // Dementation
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dementation_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_6"  // Dominate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dominate"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+
+		"discipline_sel_6"  // Dominate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Dominate_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_7"  // Fortitude
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Fortitude"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_7"  // Fortitude
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Fortitude_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_8"  // Obfuscate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Obfuscate"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_8"  // Obfuscate
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Obfuscate_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_9"  // Potence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Potence"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_9"  // Potence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Potence_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_10"  // Presence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Presence"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_10"  // Presence
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Presence_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_11"  // Protean
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Protean"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_11"  // Protean
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Protean_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_12"  // Thaumaturgy
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Thaumaturgy"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_12"  // Thaumaturgy
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/Thaumaturgy_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+
+		"discipline_unsel_13"  // Shield of Faith (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/ShieldOfFaith"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_13"  // Shield of Faith (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/ShieldOfFaith_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_14"  // Divine Vision (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/HolySight"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_14"  // Divine Vision (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/HolySight_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_15"  // Holy Light (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/DivineLight"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_15"  // Holy Light (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/DivineLight_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_unsel_16"  // Mind Shield (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/MindShield"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		"discipline_sel_16"  // Mind Shield (Numina)
+		{
+			"640"
+			{
+				"file"	"hud/Disciplines/MindShield_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"64"
+			}
+		}
+
+		// Inventory Item Categories:
+		"Category_0"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/Character"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Brujah"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Brujah"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Gangrel"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Gangrel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Malkavian"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Malkavian"
+				"x"		"0"
+				"y"		"0"
+				"width"		"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Nosferatu"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Nosferatu"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Toreador"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Toreador"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Tremere"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Tremere"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+		"Category_0_Ventrue"  // Disciplines
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/D_Ventrue"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_1"  // Melee Weapons
+		{
+			"640"
+			{
+				"file"	"hud\Catagory_Icons/MeleeWeapons"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_2"  // Weapons
+		{
+			"640"
+			{
+				"file"	"hud\Catagory_Icons/RangedWeapons"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_3"  // Weapons
+		{
+			"640"
+			{
+				"file"	"hud\Catagory_Icons/ThrownWeapons"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_4"  // Armor
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/Armors"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_5"  // Miscellaneous
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/GeneralInven"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_6"  // Powerups
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/GeneralInven"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"Category_7"  // Maintenance
+		{
+			"640"
+			{
+				"file"	"hud/Catagory_Icons/Character"
+				"x"		"0"
+				"y"		"0"
+				"width"	"128"
+				"height"	"128"
+			}
+		}
+
+		"CatCycle_Left_Up"
+		{
+			"640"
+			{
+				"file"	"hud/Barter_Loot/Bart_CatCycle_L_UP"
+				"x"		"0"
+				"y"		"0"
+				"width"	"64"
+				"height"	"64"
+			}
+		}
+
+		"CatCycle_Left_Down"
+		{
+			"640"
+			{
+				"file"	"hud/Barter_Loot/Bart_CatCycle_L_DWN"
+				"x"		"0"
+				"y"		"0"
+				"width"	"64"
+				"height"	"64"
+			}
+		}
+
+		"CatCycle_Right_Up"
+		{
+			"640"
+			{
+				"file"	"hud/Barter_Loot/Bart_CatCycle_R_UP"
+				"x"		"0"
+				"y"		"0"
+				"width"	"64"
+				"height"	"64"
+			}
+		}
+
+		"CatCycle_Right_Down"
+		{
+			"640"
+			{
+				"file"	"hud/Barter_Loot/Bart_CatCycle_R_DWN"
+				"x"		"0"
+				"y"		"0"
+				"width"	"64"
+				"height"	"64"
+			}
+		}
+
+		// ------------------------
+		// Armors:
+		// ------------------------
+
+
+		// Armor: Brujah: Female
+		"a_brujah_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahF/Brujah_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Brujah: Male
+		"a_brujah_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_brujah_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/BrujahM/Brujah_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Gangrel: Female
+		"a_gangrel_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelF/Gangrel_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Gangrel: Male
+		"a_gangrel_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_gangrel_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/GangrelM/Gangrel_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Malkavian: Female
+		"a_malkavian_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianF/Malkavian_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Malkavian: Male
+		"a_malkavian_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_malkavian_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/MalkavianM/Malkavian_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Nosferatu: Female
+		"a_nosferatu_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuF/Nosferatu_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Nosferatu: Male
+		"a_nosferatu_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_nosferatu_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/NosferatuM/Nosferatu_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Toreador: Female
+		"a_toreador_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorF/Toreador_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Toreador: Male
+		"a_toreador_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_toreador_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/ToreadorM/Toreador_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Tremere: Female
+		"a_tremere_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereF/Tremere_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Tremere: Male
+		"a_tremere_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_tremere_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/TremereM/Tremere_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Ventrue: Female
+		"a_ventrue_f_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_f_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueF/Ventrue_F_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+
+
+		// Armor: Ventrue: Male
+		"a_ventrue_m_0"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A0"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_0_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A0_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_1"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A1"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_1_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A1_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_2"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A2"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_2_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A2_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_3"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A3"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_3_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A3_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_4"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A4"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_4_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A4_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_5"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A5"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+		"a_ventrue_m_5_sel"
+		{
+			"640"
+			{
+				"file"	"hud/Inventory_Images/Armors/VentrueM/Ventrue_M_A5_Sel"
+				"x"		"0"
+				"y"		"0"
+				"width"	"100"
+				"height"	"128"
+			}
+		}
+	}
+}
