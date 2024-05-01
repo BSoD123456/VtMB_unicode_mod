@@ -405,6 +405,20 @@ MOD_DLLS = {
             (0x550e3, [
                 I.create_reg_mem(C.LEA_R32_M, R.EBP, M(R.EDX, displ=-0x1, displ_size=1))
             ]),
+            # subtitle linebreak calc limit width
+            # origin: limit_width = win_width - max_char_width('Y'.tall)
+            (0xf221e, [
+                # double the max_char_width
+                I.create_reg_u32(C.SHL_RM32_1, R.EAX, 1),
+                I.create(C.NOPD),
+            ]),
+            (0xf2229, [
+                # use ecx instead of eax
+                I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.EBP, displ=-0x8, displ_size=1)),
+                I.create_reg_reg(C.SUB_R32_RM32, R.ECX, R.EAX),
+                I.create(C.NOPD),
+                I.create_reg(C.PUSH_R32, R.ECX),
+            ]),
             # subtitle linebreak modify
             (0xf223b, with_label_ctx(lambda lbc: [
                 # mod width_limit_len if the last char is not space

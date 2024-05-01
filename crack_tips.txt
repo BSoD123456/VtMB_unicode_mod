@@ -338,6 +338,9 @@ engine.201189E4 -> client.1CF04440
       
       1CF2210E -> call client.1D001300 (some_global?, stack_text_ansi) # check some (tail) pattern in text ?
       
+      1D692218 -> call vguimatsurface.25EF090 # CMatSystemSurface::GetFontTall # use char 'Y' tall to max char width
+      1D692229 # get window width
+      1D69222C # sub max char width to calc max limit_width. limit_width = win_width - max_char_width
       1CF22236 -> call client.1CF21EE0 (some_hndl?(:ecx), limit_width?, text, text_len) # find breakline point, ret to eax
         (1D131EE0 # cur func base)
         1D131EFF # loop here for find linebreak
