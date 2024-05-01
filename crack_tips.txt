@@ -472,7 +472,10 @@ engine.2002C814 -> call ebp (2002B890)
                 vstdlib.00234EF9 # copy file content buff(2129CB20) to another buff(2129D330)
           200DB742 -> call dword ptr ds:[<&Q_strncpy>]
           200DB773 -> call dword ptr ds:[<&Q_strncpy>]
+        200DB7F1 # loop here, split sentences for subtitle
+        200DB803 # main check start here, hook here
         200DB810 # check ".!?" for auto line break  (<- line break here)
+        200DB8EA # loop end
 
 
 
