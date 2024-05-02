@@ -483,9 +483,21 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[10]),
                 I.create(C.NOPD),
             ]),
+            # draw_text_info record char_index
+            (0x1ae8e1, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[11]),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+                I.create(C.NOPD),
+            ]),
             # draw_text_info make a line start position table
             (0x1aea1d, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
+                I.create(C.NOPD),
+            ]),
+            # draw_text_info load char_index
+            (0x1aebb2, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[12]),
                 I.create(C.NOPD),
             ]),
             # terminal buff clean
@@ -851,7 +863,35 @@ MOD_DLLS = {
                 I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 1),
                 I.create_branch(C.JMP_REL32_32, 0x1ae7fb),
             ])),
-        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380, 0x400, 0x480, 0x500, 0x580, 0x600, 0x680], []),
+            # hook draw_text_info record char_index
+            (code_ext + hooks[11], with_label_ctx(lambda lbc: [
+                # read cur-byte-2 and byte-2
+                I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x18, displ_size=1)),
+                # put them highest 16b in eax
+                I.create_reg_u32(C.SHR_RM32_IMM8, R.EAX, 8),
+                I.create_reg_u32(C.SHL_RM32_IMM8, R.EAX, 16),
+                # merge ebx
+                I.create_reg_reg(C.OR_R32_RM32, R.EAX, R.EBX),
+                # record merged eax(flags and ebx)
+                I.create_mem_reg(C.MOV_RM32_R32, M(R.ESP, displ=0x3c, displ_size=1), R.EAX),
+                # done
+                I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESP, displ=0x11, displ_size=1)),
+                I.create_branch(C.JMP_REL32_32, 0x1ae8e9),
+            ])),
+            # hook draw_text_info load char_index
+            (code_ext + hooks[12], with_label_ctx(lambda lbc: [
+                # read merged index
+                I.create_reg_mem(C.MOV_R32_RM32, R.EAX, M(R.ESP, displ=0x3c, displ_size=1)),
+                # load ebx
+                I.create_reg_reg(C.MOVZX_R32_RM16, R.EBX, R.AX),
+                # set flags
+                I.create_reg_u32(C.SHR_RM32_IMM8, R.EAX, 16),
+                I.create_mem_reg(C.MOV_RM8_R8, M(R.ESP, displ=0x19, displ_size=1), R.AL),
+                I.create_mem_reg(C.MOV_RM8_R8, M(R.ESP, displ=0x1a, displ_size=1), R.AH),
+                #done
+                I.create_branch(C.JMP_REL32_32, 0x1aebc4),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380, 0x400, 0x480, 0x500, 0x580, 0x600, 0x680, 0x700, 0x780], []),
     },
     'engine': {
         'path': 'Bin',
