@@ -114,7 +114,12 @@ text copy
 line position (logged above, but no detail)
 1C9DE7DF # loop start. edi is that text object, esi=edi+58 aka text length member ptr.
 1C9DE7F2 # read char from text buff([edi+60]/[esi+8])
+1C9DE7F7 # cache this char to stack(esp), only the lowest 8b valid (I guess)
+1C9DE8BA # read cached char from stack(esp) with dword, but masked highest 24b, only use lowest 8b
 1C9DE8C5 -> client.1CA01863 (src_char) # get charset flags
+1C9DE8DB # if [esp+0x10]:
+1C9DE8E5 # record ebx(char scan index) to [esp+0x3c]
+1C9DE985 # read cached char from stack(esp) with dword, but masked highest 24b, only use lowest 8b(in next func client.1C9DD550)
 1C9DE98F -> client.1C9DD550 # get char width
 1C9DE999 -> Q_isprint
 1C9DE9B9 # compare ecx(current width) and eax(limit width)
@@ -123,7 +128,12 @@ line position (logged above, but no detail)
 1C9DE9CD # log line start position from here
 1C9DE9DB -> client.1C9DE610
   1C9DE632 -> vguimatsurface.0313F020 # GetFontTall
+1C9DE9E1 # read cached char from stack(esp)
+1C9DE9EA # check '\r'
+1C9DE9F7 # check '\n'
 1C9DEA1D # write line start position to tab[edi+6c]
+1C9DEB3D # if some condition:
+1C9DEBB2 # reset ebx(char scan index) with [esp+0x3c]
 1C9DEBEF # loop end
 
 

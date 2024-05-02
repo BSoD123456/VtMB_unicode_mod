@@ -474,7 +474,16 @@ MOD_DLLS = {
                 I.create_branch(C.JMP_REL32_32, 0xf22e2),
                 #I.create(C.NOPD),
             ])),
-            # make a line start position table in draw_text_info
+            # draw_text_info init stack
+            (0x1ae72a, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[9]),
+            ]),
+            # draw_text_info cache a char for next calc
+            (0x1ae7f5, [
+                I.create_branch(C.JMP_REL32_32, code_ext + hooks[10]),
+                I.create(C.NOPD),
+            ]),
+            # draw_text_info make a line start position table
             (0x1aea1d, [
                 I.create_branch(C.JMP_REL32_32, code_ext + hooks[1]),
                 I.create(C.NOPD),
@@ -593,17 +602,13 @@ MOD_DLLS = {
                 # ret
                 I.create_branch(C.JMP_REL32_32, 0x55083),
             ])),
-            # hooks record line start position in draw_text_info
+            # hooks draw_text_info record line start position
             (code_ext + hooks[1], with_label_ctx(lambda lbc: [
                 I.create_mem_reg(C.MOV_RM32_R32, M(R.ECX, index=R.EAX, scale=4), R.EBX),
-                I.create_reg(C.PUSH_R32, R.EAX),
-                I.create_reg_mem(C.MOV_R8_RM8, R.AL, M(R.ESP, displ=0x1c, displ_size=1)),
-                # 0xa0 can only make gb2312 working, not gbk ext
-                # but 0x80 still can not make gbk ext working currectly
-                # whatever, 0x80 is more flexible than 0xa0
-                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x80),
-                I.create_reg(C.POP_R32, R.EAX),
-                I.create_branch(C.JB_REL32_32, lbc.lb('pass')),
+                # check cur-byte-2 flag
+                I.create_mem_u32(C.CMP_RM8_IMM8, M(R.ESP, displ=0x1a, displ_size=1), 0),
+                I.create_branch(C.JE_REL32_32, lbc.lb('pass')),
+                # dec pos in mem, not ebx
                 I.create_mem(C.DEC_RM32, M(R.ECX, index=R.EAX, scale=4)),
                 lbc.add('pass',
                     I.create_reg_mem(C.MOV_R32_RM32, R.ECX, M(R.EBP)),
@@ -810,7 +815,43 @@ MOD_DLLS = {
                 I.create_reg_u32(C.ADD_RM32_IMM8, R.ESP, 4),
                 I.create_branch(C.JMP_REL32_32, 0x53d82),
             ])),
-        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380, 0x400, 0x480, 0x500, 0x580], []),
+            # hook draw_text_info init stack
+            (code_ext + hooks[9], with_label_ctx(lambda lbc: [
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(R.ESP, displ=0x12, displ_size=1), 0),
+                I.create_mem_u32(C.MOV_RM32_IMM32, M(R.ESP, displ=0x18, displ_size=1), 0),
+                I.create_branch(C.JMP_REL32_32, 0x1ae72f),
+            ])),
+            # hook draw_text_info cache a char for next calc
+            (code_ext + hooks[10], with_label_ctx(lambda lbc: [
+                # read and check byte-2 flag
+                I.create_reg_mem(C.MOV_R8_RM8, R.AH, M(R.ESP, displ=0x19, displ_size=1)),
+                I.create_reg_reg(C.TEST_RM8_R8, R.AH, R.AH),
+                I.create_branch(C.JE_REL32_32, lbc.lb('byte-1')),
+                # is byte-2
+                # clear byte-2 flag
+                I.create_reg_reg(C.XOR_R8_RM8, R.AH, R.AH),
+                # set cur-byte-2 flag
+                I.create_mem_u32(C.MOV_RM8_IMM8, M(R.ESP, displ=0x1a, displ_size=1), 1),
+                I.create_branch(C.JMP_REL32_32, lbc.lb('done')),
+                # is byte-1
+                lbc.add('byte-1',
+                    # clear cur-byte-2 flag
+                    I.create_mem_u32(C.MOV_RM8_IMM8, M(R.ESP, displ=0x1a, displ_size=1), 0),
+                ),
+                # check if is ansi
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x80),
+                I.create_branch(C.JB_REL32_32, lbc.lb('done')),
+                # byte-1 is ansi
+                # set byte-2 flag
+                I.create_reg_u32(C.MOV_R8_IMM8, R.AH, 1),
+                # done
+                lbc.add('done',
+                    I.create_mem_reg(C.MOV_RM16_R16, M(R.ESP, displ=0x18, displ_size=1), R.AX),
+                ),
+                I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 1),
+                I.create_branch(C.JMP_REL32_32, 0x1ae7fb),
+            ])),
+        ])(0x10000000, 0x683000, 0x685000, [0x0, 0x100, 0x200, 0x300, 0x380, 0x400, 0x480, 0x500, 0x580, 0x600, 0x680], []),
     },
     'engine': {
         'path': 'Bin',
@@ -902,7 +943,7 @@ MOD_DLLS = {
 
                 # function next_char
                 lbc.add('func_nxtc',
-                    I.create_reg_u32(C.CMP_RM8_IMM8, R.AL, 0x80),
+                    I.create_reg_u32(C.CMP_AL_IMM8, R.AL, 0x80),
                 ),
                 I.create_branch(C.JB_REL32_32, lbc.lb('nxtc_ascii')),
                 I.create_reg(C.INC_R32, R.EBP),
