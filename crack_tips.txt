@@ -588,3 +588,58 @@ invoke larry.StartBarter:
       1CF8E5EB -> call client.1CF8DDC0
         1CF8DDD0 # loop here, copy clan key index table
         1CF8DDF2 # loop end
+
+
+make choose dialog:
+
+vguimatsurface: 02680000
+vstdlib: 00230000
+
+0023618C # write number
+< 00236205 -> call vstdlib.23617F
+<   00236126 -> call vstdlib.2361E5
+<     00234F95 -> call vstdlib.235A3E # call make_choose_dialog_item(&dst_addr, ...)
+
+vstdlib.235A3E # make_choose_dialog_item(&dst_addr, ...)  <-  wrong! it's something like printf(&dst, patt, ...)
+  00235FF0 -> call vstdlib.239E90 # get sel number to eax <- wrong! get val
+  00236126 -> call vstdlib.2361E5 # write sel number to dst_addr <- wrong! write patt
+
+client: 10C30000
+10C83D0D -> call dword ptr ds:[<Q_snprintf>] # make choose dialog sel item with snprintf
+10C83D5C # dialog choice linebreak modify, dlg_chc_lnbrk init loop
+< 10C83C18 -> call client.10C83C70 # handle choose dialog sel, hndl_choose_dlg_sel(?, ?, text, index, ?)
+<   10C83145 -> call client.10C83B50
+
+
+egine: 20000000
+20006B3A # write a dlg buf by decode from engine.data ??? 2115ADF0 -> 203464F8
+200C0521 # 2114AC78 -> 2115ADF0
+200C04BF # 210FBEEC?-> 2114AC78
+< 200260E3 -> call engine.200C03A0
+200C0C8E # 0016EFF0 -> 210FBEEC?
+200052C7 # write to 0016EFF0, 2A1ABDFC -> 0016EFF0
+200BC8E1 # 2A19C204 -> 2A1ABDFC
+200052EF # write to 2A19C204, shift from 212C03E9
+200052EF # write to 212C03EC, 21305820 -> 212C03E9
+200063AB # write to 21305820  <- not init, ignore
+
+200050C9 # set 7f to 21305822
+2000513D # set 4bytes without 20 to 21305820
+
+vampire: 07ED0000
+07FB5E18 -> call dword ptr ds:[edx+138] # call 20109EA0(txt(244F7078), ...), write to 21305822
+    20109EBB -> jmp engine.200067E0
+    200067F2 # loop for  make choose dialog sel item
+    20006805 -> call engine.200050E0 # write something ?
+    20006848 -> call engine.20005090 # set 20 to 21305823, 20 to 21305824
+< 07FB5A86 -> call vampire.7EE269D # only sel item goes here, question not.
+
+07FB87EB # write 7f 20 20 to 244F7078
+< 07FB7E6F -> call vampire.7ED1FE1
+
+vampire.7ED1FE1 # make_choose_dialog_item(dlgfile_txt_idx, idx, some_txt_base?)
+  07FB8624 -> call vampire.7EDBA00 # get dlg text to edx
+  07FB87DF # set dstbuf to: edi = ebx+ebp+804
+  07FB87E8 # loop write 7f 20 20 to dstbuf, from eax(085B86C8)
+
+07FBA649 # set 7f to 085B86C8

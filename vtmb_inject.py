@@ -995,6 +995,17 @@ MOD_DLLS = {
             ])),
         ])(0x10000000, 0x1391000, 0x1392000, [0], []),
     },
+    'vampire': {
+        'path': 'Vampire\dlls',
+        'file': 'vampire.dll',
+        'md5':  '1033074032a1fba40cbf1946a4a0d975',
+        'patch': [
+            # set dialog choose skill mark symbol, from 0x7f to 0x2a(*)
+            (0xea647, [
+                I.create_reg_u32(C.MOV_R8_IMM8, R.DL, 0x2a),
+            ]),
+        ],
+    },
 }
 
 def hash_md5(val):
